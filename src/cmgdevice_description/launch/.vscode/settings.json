@@ -1,0 +1,22 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/disk1/home/trucker/ROS2dev/staebltech_ws/install/cmgdevice/lib/python3.10/site-packages",
+        "/disk1/home/trucker/ROS2dev/staebltech_ws/install/bicycle/lib/python3.10/site-packages",
+        "/disk1/home/trucker/catkin_ws/devel/lib/python3/dist-packages",
+        "/disk1/home/trucker/ros2_ws/build/my_robot_controller",
+        "/disk1/home/trucker/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages",
+        "/PythonAPI/carla/dist/carla-0.9.14-py3.10-linux-x86_64.egg"
+    ],
+    "python.analysis.extraPaths": [
+        "/disk1/home/trucker/ROS2dev/staebltech_ws/install/cmgdevice/lib/python3.10/site-packages",
+        "/disk1/home/trucker/ROS2dev/staebltech_ws/install/bicycle/lib/python3.10/site-packages",
+        "/disk1/home/trucker/catkin_ws/devel/lib/python3/dist-packages",
+        "/disk1/home/trucker/ros2_ws/build/my_robot_controller",
+        "/disk1/home/trucker/ros2_ws/install/my_robot_controller/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages",
+        "/PythonAPI/carla/dist/carla-0.9.14-py3.10-linux-x86_64.egg"
+    ]
+}

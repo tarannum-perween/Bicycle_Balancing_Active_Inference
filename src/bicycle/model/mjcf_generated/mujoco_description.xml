@@ -1,0 +1,37 @@
+<mujoco model="bicycle">
+  <compiler angle="radian" meshdir="assets/" texturedir="assets/"/>
+
+  <asset>
+    <mesh name="Frame" content_type="model/stl" file="full/Frame.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Steering" content_type="model/stl" file="full/Steering.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Wheel" content_type="model/stl" file="full/Wheel.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <body name="base_link">
+      <body name="frame">
+        <inertial pos="0.48 0 0.66" quat="0.5 0.5 0.5 0.5" mass="3.07549" diaginertia="0.355655 0.235711 0.138448"/>
+        <geom pos="0.93 -0.095205 0.318" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.12 0.32 0.8 1" density="0" mesh="Frame"/>
+        <body name="steering" pos="0.88 0 0.8">
+          <inertial pos="0.02 0 -0.1" mass="1.55391" diaginertia="0.118356 0.0810623 0.0498287"/>
+          <joint name="steering_joint" range="-0.7 0.7" actuatorfrcrange="-20 20" damping="0.1" frictionloss="0.01" axis="-0.22 0 0.9755"/>
+          <geom pos="0.13 -0.290174 -0.44" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.65 0.65 0.68 1" density="0" mesh="Steering"/>
+          <body name="wheel2" pos="0.11 0 -0.467">
+            <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+            <joint name="wheel2_joint" damping="0.01" axis="0 1 0"/>
+            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.08 0.08 0.08 1" density="0" mesh="Wheel"/>
+          </body>
+        </body>
+        <body name="wheel1" pos="0 0 0.333">
+          <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+          <joint name="wheel1_joint" damping="0.01" axis="0 1 0"/>
+          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.08 0.08 0.08 1" density="0" mesh="Wheel"/>
+        </body>
+        <body name="imu_link" pos="0.45 0 0.82">
+          <inertial pos="0 0 0" quat="0 0.707107 0 0.707107" mass="0.01" diaginertia="1.08333e-06 8.33333e-07 4.16667e-07"/>
+          <geom size="0.015 0.01 0.005" type="box" contype="0" conaffinity="0" group="1" rgba="0.1 0.8 0.2 1" density="0"/>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

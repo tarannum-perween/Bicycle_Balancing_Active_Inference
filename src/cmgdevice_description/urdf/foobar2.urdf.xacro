@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cmg_device">
+
+<!-- obtain the Control Moment Gyro device definitions -->
+<!-- 1. Load the YAML file as a dictionary property -->
+  <xacro:property name="yaml_file_ptr" value="$(find cmgdevice_description)/config/cmgparams.yaml" />
+  <xacro:property name="yaml_file_name" value="${xacro.load_yaml(yaml_file_ptr)}" />
+  <xacro:property name="yaml_file" value="${yaml_file_name['yaml_param_file']}" />
+  <xacro:property name="cmg_params" value="${xacro.load_yaml(yaml_file)}" />
+
+  <!-- 2. Extract specific variables for use in elements -->
+  <xacro:property name="disk_rad"   value="${cmg_params['links']['disk_rad']}" />
+  <xacro:property name="disk_thick" value="${cmg_params['links']['disk_thick']}" />
+  <xacro:property name="annulus_radout" value="${cmg_params['links']['annulus_radout']}" />
+  <xacro:property name="annulus_radin" value="${cmg_params['links']['annulus_radin']}" />
+  <xacro:property name="annulus_thick" value="${cmg_params['links']['annulus_thick']}" />
+  <xacro:property name="disk1_mass" value="${cmg_params['links']['disk1_mass']}" />
+  <xacro:property name="annulus_mass" value="${cmg_params['links']['annulus_mass']}" />
+  <xacro:property name="Ixx_disk" value="${cmg_params['links']['Ixx_disk']}" />
+  <xacro:property name="Iyy_disk" value="${cmg_params['links']['Iyy_disk']}" />
+  <xacro:property name="Izz_disk" value="${cmg_params['links']['Izz_disk']}" />
+  <xacro:property name="Ixx_ann" value="${cmg_params['links']['Ixx_ann']}" />
+  <xacro:property name="Iyy_ann" value="${cmg_params['links']['Iyy_ann']}" />
+  <xacro:property name="Izz_ann" value="${cmg_params['links']['Izz_ann']}" />
+
+  <xacro:property name="flywheel_servo_mass" value="${cmg_params['actuators']['flywheel_servo_mass']}" />
+  <xacro:property name="torque_servo_mass" value="${cmg_params['actuators']['torque_servo_mass']}" />
+  <xacro:property name="flywheel_max_speed" value="${cmg_params['actuators']['flywheel_max_speed']}" />
+  <xacro:property name="flywheel_Kv" value="${cmg_params['actuators']['flywheel_Kv']}" />
+  <xacro:property name="torque_servo_Tnominal" value="${cmg_params['actuators']['torque_servo_Tnominal']}" />
+  <xacro:property name="torque_servo_Tstall" value="${cmg_params['actuators']['torque_servo_Tstall']}" />
+
+  <!-- needed Gazebo defs -->
+
+  <!-- defs for device 'frame' -->
+  <!-- assume 80-20 1010 or 1010S specs of 0.51 lbs/ft.=> 0.2313 kg/ft. => 0.759 kg/m  -->
+  <xacro:property name="bar_lin_density" value="0.758858268" />
+  <xacro:property name="bar_xsec"        value="0.025" />
+  <xacro:property name="disk_clearance"  value="0.002" />
+  <xacro:property name="bar_xsec_sq"     value="${bar_xsec * bar_xsec}" />
+  
+  <xacro:property name="bar1_length"     value="${2.0*(disk_rad + bar_xsec + disk_clearance) }" />
+  <xacro:property name="bar1_mass"       value="${bar_lin_density*bar1_length}" />
+  
+  <xacro:property name="bar2_length"     value="${2.0*(disk_rad + disk_clearance) }" />
+  <xacro:property name="bar2_mass"       value="${bar_lin_density*bar2_length}" />
+  
+  <xacro:property name="Ip_comaxis_bar1"  value="${bar1_mass*(bar1_length**2 + bar_xsec**2)/12.0 }" />
+  <xacro:property name="Ip_xsection_bar1" value="${bar1_mass*(bar_xsec**2)/6.0}" />
+  <xacro:property name="Ip_comaxis_bar2"  value="${bar2_mass*(bar2_length**2 + bar_xsec**2)/12.0 }" />
+  <xacro:property name="Ip_xsection_bar2" value="${bar2_mass*(bar_xsec**2)/6.0}" />
+
+  <xacro:property name="fw_servo_R"   value="0.025" />
+  <xacro:property name="fw_servo_L"   value="0.05" />
+  <xacro:property name="torq_servo_R"  value="0.035" />
+  <xacro:property name="torq_servo_L"  value="0.066" />
+  <xacro:property name="Izz_fw_servo" value="${ flywheel_servo_mass*fw_servo_R**2/2.0}" />
+  <xacro:property name="Ixx_fw_servo" value="${ flywheel_servo_mass*( fw_servo_R**2/4.0 + fw_servo_L**2/12.0 ) }" />
+  <xacro:property name="Iyy_fw_servo" value="${Ixx_fw_servo}" />
+  <xacro:property name="Izz_torq_servo" value="${torque_servo_mass*torq_servo_R**2/2.0}" />
+  <xacro:property name="Ixx_torq_servo" value="${torque_servo_mass*(torq_servo_R**2/4.0 + torq_servo_L**2/12.0 )}" />
+  <xacro:property name="Iyy_torq_servo" value="${Ixx_torq_servo}" />
+
+  <xacro:property name="torq_servo_name" value="torque_servo" />
+  <xacro:property name="torq_servo_x" value="0.0" />
+  <xacro:property name="torq_servo_y" value="0.0" />
+  <xacro:property name="torq_servo_z" value="${bar2_length + torq_servo_L/2.0 - bar_xsec}" />
+
+  <xacro:property name="fw_servo_name" value="flywheel_servo" />
+  <xacro:property name="fw_servo_rx" value="${pi/2.0}" />
+  <xacro:property name="fw_servo_ry" value="0.0" />
+  <xacro:property name="fw_servo_rz" value="0.0" />
+  <xacro:property name="fw_servo_x" value="0.0" />
+  <xacro:property name="fw_servo_y" value="${2.0*disk_thick + 0.5*fw_servo_L}" />
+  <!-- xacro:property name="fw_servo_y" value="1.0" / -->
+  <!-- xacro:property name="fw_servo_z" value="${0.5*(bar2_length + bar_xsec)}" / -->
+  <xacro:property name="fw_servo_z" value="0.0" />
+
+
+  <xacro:property name="fw_disk_rx" value="${fw_servo_rx}" />
+  <xacro:property name="fw_disk_ry" value="${fw_servo_rx}" />
+  <xacro:property name="fw_disk_rz" value="${fw_servo_rz}" />
+  <xacro:property name="fw_disk_x" value="0.0" />
+  <xacro:property name="fw_disk_y" value="${-0.5*disk_thick}" />
+  <!-- xacro:property name="fw_disk_z" value="${0.5*(bar2_length + bar_xsec)}" / -->
+  <xacro:property name="fw_disk_z" value="0.0" />
+
+  <xacro:property name="annulus_rx" value="${fw_disk_rx}" />
+  <xacro:property name="annulus_ry" value="${fw_disk_ry}" />
+  <xacro:property name="annulus_rz" value="${fw_disk_rz}" />
+  <xacro:property name="annulus_x" value="${fw_disk_x}" />
+  <xacro:property name="annulus_y" value="${fw_disk_y + -0.5*annulus_thick}" />
+  <xacro:property name="annulus_z" value="${fw_disk_z}" />
+
+ <link name="base_link">
+    <visual>
+        <geometry>
+            <cylinder length="0.1" radius="0.3"/>
+        </geometry>
+        
+    <!-- origin - the reference frame of the visual element wrt the reference frame of the link -->
+    <!-- rpy == roll,pitch,yaw -->
+    <!-- xyz == x,y,z OFFSETs -->
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <material name="blue">
+            <color rgba="0 1 0 1"/>
+        </material>
+    </visual>
+</link>
+
+<joint name="joint_1" type="revolute">
+    <parent link="base_link" />
+    <child link="first_link" />
+    <origin xyz="0 0 0.05"/>
+    <axis xyz="0 0 1" />
+    <limit effort="300" velocity="2.0" lower="-1.2" upper="1.2"/>
+</joint>
+
+<link name="first_link">
+    <visual>
+        <geometry>
+            <cylinder length="0.5" radius="0.08"/>
+        </geometry>
+        <origin rpy="0 0 0" xyz="0 0 0.25"/>
+        <material name="yellow">
+            <color rgba="1 1 0 1"/>
+        </material>
+    </visual>
+</link>
+
+<!-- <joint name="joint_2" type="prismatic" > -->
+<joint name="joint_2" type="revolute">
+    <parent link="first_link"/>
+    <child link="second_link"/>
+    <!-- prismatic joint: <origin xyz="0 0 0.5" /> -->
+    <!-- prismatic joint: <axis xyz="0 1 0" /> -->
+    <origin xyz="0 0.0 0.5" />
+    <axis xyz="1 0 0"/>
+    <limit effort="300" velocity="2.0" lower="-2.0" upper="2.0" />
+</joint>
+
+<link name="second_link">
+    <visual>
+        <geometry>
+            <!-- in the example x=0.2 is the depth of the box, and z=0.1 is the height of the box -->
+            <box size="0.2 0.7 0.1" />
+        </geometry>
+        <!-- the origin is half way up the height, and relative to second link origin -->
+        <origin rpy="0 0 0" xyz="0 0.35 0.05" />
+        <material name="red">
+            <color rgba="0 0 1 1" />
+        </material>
+    </visual>
+</link>
+
+<joint name="joint_3" type="revolute">
+    <parent link="second_link"/>
+    <child link="third_link"/>
+    <origin xyz="0 0.7 0.0" />
+    <axis xyz="1 0 0"/>
+    <limit effort="300" velocity="2.0" lower="-2.0" upper="2.0" />
+</joint>
+
+<link name="third_link">
+    <visual>
+        <geometry>
+            <!-- in the example x=0.2 is the depth of the box, and z=0.1 is the height of the box -->
+            <box size="0.2 0.7 0.1" />
+        </geometry>
+        <!-- the origin is half way up the height, and relative to second link origin -->
+        <origin rpy="0 0 0" xyz="0 0 0.35 0.05" />
+        <material name="orange">
+            <color rgba="0 0.647 1 1" />
+        </material>
+    </visual>
+</link>
+
+</robot>

@@ -1,0 +1,223 @@
+<mujoco model="bicycle">
+  <compiler angle="radian" meshdir="assets/" texturedir="assets/"/>
+
+  <asset>
+    <mesh name="Frame" content_type="model/stl" file="full/Frame.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Steering" content_type="model/stl" file="full/Steering.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Wheel" content_type="model/stl" file="full/Wheel.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+
+  <worldbody>
+    <body name="base_link">
+      <body name="frame">
+        <inertial pos="0.48 0 0.66" quat="0.5 0.5 0.5 0.5" mass="3.07549" diaginertia="0.355655 0.235711 0.138448"/>
+        <geom pos="0.93 -0.095205 0.318" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.12 0.32 0.8 1" density="0" mesh="Frame"/>
+        <body name="steering" pos="0.88 0 0.8">
+          <inertial pos="0.02 0 -0.1" mass="1.55391" diaginertia="0.118356 0.0810623 0.0498287"/>
+          <joint name="steering_joint" range="-0.7 0.7" actuatorfrcrange="-20 20" damping="0.1" frictionloss="0.01" axis="-0.22 0 0.9755"/>
+          <geom pos="0.13 -0.290174 -0.44" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.65 0.65 0.68 1" density="0" mesh="Steering"/>
+          <body name="wheel2" pos="0.11 0 -0.467">
+            <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+            <joint name="wheel2_joint" damping="0.01" axis="0 1 0"/>
+            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.08 0.08 0.08 1" density="0" mesh="Wheel"/>
+          </body>
+        </body>
+        <body name="wheel1" pos="0 0 0.333">
+          <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+          <joint name="wheel1_joint" damping="0.01" axis="0 1 0"/>
+          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" contype="0" conaffinity="0" group="1" rgba="0.08 0.08 0.08 1" density="0" mesh="Wheel"/>
+        </body>
+        <body name="imu_link" pos="0.45 0 0.82">
+          <inertial pos="0 0 0" quat="0 0.707107 0 0.707107" mass="0.01" diaginertia="1.08333e-06 8.33333e-07 4.16667e-07"/>
+          <geom size="0.015 0.01 0.005" type="box" contype="0" conaffinity="0" group="1" rgba="0.1 0.8 0.2 1" density="0"/>
+        </body>
+        <body name="rider_Pelvis" pos="0.29 0 1.01">
+          <inertial pos="0 0 0.049743" quat="0.5 0.5 -0.5 0.5" mass="4.976" diaginertia="0.033653 0.029678 0.011854"/>
+          <geom size="0.069075 0.12457 0.0487345" pos="0 0 0.049743" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+          <body name="rider_L5_f1" pos="-0.000206 0 0.098478">
+            <body name="rider_L5_f2" quat="0.974794 0 0.223106 0">
+              <body name="rider_L5">
+                <inertial pos="0 0 0.047552" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.018868 0.014872"/>
+                <geom size="0.069075 0.081615 0.047552" pos="0 0 0.047552" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                <body name="rider_L3_f1" pos="0.000374 0 0.095104">
+                  <body name="rider_L3_f2">
+                    <body name="rider_L3">
+                      <inertial pos="0 0 0.042958" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.017989 0.013993"/>
+                      <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                      <body name="rider_T12_f1" pos="0 0 0.085916">
+                        <body name="rider_T12_f2">
+                          <body name="rider_T12">
+                            <inertial pos="0 0 0.042958" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.017989 0.013993"/>
+                            <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                            <body name="rider_T8_f1" pos="0 0 0.085916">
+                              <body name="rider_T8_f2">
+                                <body name="rider_T8">
+                                  <inertial pos="0 0 0.059874" quat="0.5 0.5 0.5 0.5" mass="2.488" diaginertia="0.0067278 0.0043289 0.0035473"/>
+                                  <geom size="0.067285 0.026313 0.059875" pos="0 0 0.059874" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                  <body name="rider_Neck_f1" pos="0 0 0.11975">
+                                    <body name="rider_Neck_f2" quat="0.995004 0 -0.0998334 0">
+                                      <body name="rider_Neck">
+                                        <inertial pos="0 0 0.044626" mass="0.7464" diaginertia="0.0006461 0.0006461 0.00030124"/>
+                                        <geom size="0.014205 0.044626" pos="0 0 0.044626" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                        <body name="rider_Head_f1" pos="0.000152 0 0.089252">
+                                          <body name="rider_Head_f2">
+                                            <body name="rider_Head">
+                                              <inertial pos="0 0 0.089005" mass="2.2392" diaginertia="0.0070955 0.0070955 0.0070955"/>
+                                              <geom size="0.089005" pos="0 0 0.089005" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                            </body>
+                                          </body>
+                                        </body>
+                                      </body>
+                                    </body>
+                                  </body>
+                                  <body name="rider_RightShoulder_f1" pos="0 -0.026313 0.067052">
+                                    <body name="rider_RightShoulder_f2">
+                                      <body name="rider_RightShoulder">
+                                        <inertial pos="0 -0.065233 0" quat="0.707107 0.707107 0 0" mass="1.9282" diaginertia="0.0030029 0.0030029 0.00053578"/>
+                                        <geom size="0.023574 0.065235" pos="0 -0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                        <body name="rider_RightUpperArm_f1" pos="0 -0.13047 0" quat="0.995228 0.0975767 0 0">
+                                          <body name="rider_RightUpperArm_f2" quat="0.998248 0 0.0591743 0">
+                                            <body name="rider_RightUpperArm" quat="0.856301 0 0 0.516476">
+                                              <inertial pos="0 -0.13497 0" quat="0.707107 0.707107 0 0" mass="1.866" diaginertia="0.011736 0.011736 0.00080917"/>
+                                              <geom size="0.029449 0.13497" pos="0 -0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                              <body name="rider_RightForeArm_f1" pos="0 -0.26994 0" quat="0.999746 0.0225505 0 0">
+                                                <body name="rider_RightForeArm_f2" quat="0.999943 0 0.0106666 0">
+                                                  <body name="rider_RightForeArm" quat="0.958767 0 0 0.284195">
+                                                    <inertial pos="0 -0.11124 0" quat="0.707107 0.707107 0 0" mass="1.244" diaginertia="0.0052508 0.0052508 0.00023975"/>
+                                                    <geom size="0.019633 0.111235" pos="0 -0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                                    <body name="rider_RightHand_f1" pos="7.7e-05 -0.22247 0">
+                                                      <body name="rider_RightHand_f2">
+                                                        <body name="rider_RightHand">
+                                                          <inertial pos="0 -0.083588 0" quat="0.5 0.5 -0.5 0.5" mass="0.3732" diaginertia="0.0012555 0.00091713 0.00043425"/>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 -0.083588 0" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                                          <body name="rider_RightHandCOM" pos="0 -0.096206 0">
+                                                            <inertial pos="0 0 0" mass="1e-05" diaginertia="0 0 0"/>
+                                                          </body>
+                                                        </body>
+                                                      </body>
+                                                    </body>
+                                                  </body>
+                                                </body>
+                                              </body>
+                                            </body>
+                                          </body>
+                                        </body>
+                                      </body>
+                                    </body>
+                                  </body>
+                                  <body name="rider_LeftShoulder_f1" pos="0 0.026313 0.067052">
+                                    <body name="rider_LeftShoulder_f2">
+                                      <body name="rider_LeftShoulder">
+                                        <inertial pos="0 0.065233 0" quat="0.707107 0.707107 0 0" mass="1.9282" diaginertia="0.0030029 0.0030029 0.00053578"/>
+                                        <geom size="0.023574 0.065235" pos="0 0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                        <body name="rider_LeftUpperArm_f1" pos="0 0.13047 0" quat="0.995228 -0.0975808 0 0">
+                                          <body name="rider_LeftUpperArm_f2" quat="0.998248 0 0.0591722 0">
+                                            <body name="rider_LeftUpperArm" quat="0.856302 0 0 -0.516476">
+                                              <inertial pos="0 0.13497 0" quat="0.707107 0.707107 0 0" mass="1.866" diaginertia="0.011736 0.011736 0.00080917"/>
+                                              <geom size="0.029449 0.13497" pos="0 0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                              <body name="rider_LeftForeArm_f1" pos="0 0.26994 0" quat="0.999746 -0.0225595 0 0">
+                                                <body name="rider_LeftForeArm_f2" quat="0.999943 0 0.0106574 0">
+                                                  <body name="rider_LeftForeArm" quat="0.958767 0 0 -0.284194">
+                                                    <inertial pos="0 0.11124 0" quat="0.707107 0.707107 0 0" mass="1.244" diaginertia="0.0052508 0.0052508 0.00023975"/>
+                                                    <geom size="0.019633 0.111235" pos="0 0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                                    <body name="rider_LeftHand_f1" pos="7.7e-05 0.22247 0">
+                                                      <body name="rider_LeftHand_f2">
+                                                        <body name="rider_LeftHand">
+                                                          <inertial pos="0 0.083588 0" quat="0.5 0.5 -0.5 0.5" mass="0.3732" diaginertia="0.0012555 0.00091713 0.00043425"/>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 0.083588 0" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                                          <body name="rider_LeftHandCOM" pos="0 0.096206 0">
+                                                            <inertial pos="0 0 0" mass="1e-05" diaginertia="0 0 0"/>
+                                                          </body>
+                                                        </body>
+                                                      </body>
+                                                    </body>
+                                                  </body>
+                                                </body>
+                                              </body>
+                                            </body>
+                                          </body>
+                                        </body>
+                                      </body>
+                                    </body>
+                                  </body>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="rider_RightUpperLeg_f1" pos="0.000103 -0.081614 0.001009">
+            <body name="rider_RightUpperLeg_f2" quat="0.911039 0 -0.412321 0">
+              <body name="rider_RightUpperLeg">
+                <inertial pos="0 0 -0.22449" mass="7.775" diaginertia="0.13681 0.13681 0.01241"/>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                <body name="rider_RightLowerLeg_f1" pos="3.6e-05 0 -0.44898">
+                  <body name="rider_RightLowerLeg_f2" quat="0.748499 0 0.663135 0">
+                    <body name="rider_RightLowerLeg">
+                      <inertial pos="0 0 -0.20304" mass="2.2703" diaginertia="0.031992 0.031992 0.0015867"/>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                      <body name="rider_RightFoot_f1" pos="0.000205 0 -0.40608">
+                        <body name="rider_RightFoot_f2" quat="0.955336 0 -0.29552 0">
+                          <body name="rider_RightFoot">
+                            <inertial pos="0.054652 0 -0.039254" quat="0.5 0.5 0.5 0.5" mass="0.8086" diaginertia="0.0025944 0.0025558 0.00079209"/>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                            <body name="rider_RightToe_f1" pos="0.14456 0 -0.064752">
+                              <body name="rider_RightToe_f2">
+                                <body name="rider_RightToe">
+                                  <inertial pos="0.030086 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.0933" diaginertia="7.1624e-05 4.5038e-05 2.9717e-05"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+          <body name="rider_LeftUpperLeg_f1" pos="0.000103 0.081614 0.001009">
+            <body name="rider_LeftUpperLeg_f2" quat="0.911039 0 -0.412321 0">
+              <body name="rider_LeftUpperLeg">
+                <inertial pos="0 0 -0.22449" mass="7.775" diaginertia="0.13681 0.13681 0.01241"/>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                <body name="rider_LeftLowerLeg_f1" pos="3.6e-05 0 -0.44898">
+                  <body name="rider_LeftLowerLeg_f2" quat="0.748499 0 0.663135 0">
+                    <body name="rider_LeftLowerLeg">
+                      <inertial pos="0 0 -0.20304" mass="2.2703" diaginertia="0.031992 0.031992 0.0015867"/>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                      <body name="rider_LeftFoot_f1" pos="0.000205 0 -0.40608">
+                        <body name="rider_LeftFoot_f2" quat="0.955336 0 -0.29552 0">
+                          <body name="rider_LeftFoot">
+                            <inertial pos="0.054652 0 -0.039254" quat="0.5 0.5 0.5 0.5" mass="0.8086" diaginertia="0.0025944 0.0025558 0.00079209"/>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                            <body name="rider_LeftToe_f1" pos="0.14456 0 -0.064752">
+                              <body name="rider_LeftToe_f2">
+                                <body name="rider_LeftToe">
+                                  <inertial pos="0.030086 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.0933" diaginertia="7.1624e-05 4.5038e-05 2.9717e-05"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" contype="0" conaffinity="0" group="1" rgba="0 1 1 1" density="0"/>
+                                </body>
+                              </body>
+                            </body>
+                          </body>
+                        </body>
+                      </body>
+                    </body>
+                  </body>
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

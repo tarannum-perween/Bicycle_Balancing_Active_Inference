@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<robot name="bicycle" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Approximate reconstruction. See model/RECONSTRUCTION.md before physics use.
+       ROS axes: X forward, Y left, Z up. STL units are millimetres.
+       Mesh CAD axes are mapped by Rz(pi)*Rx(pi/2): (-X, Z, Y). -->
+  <xacro:property name="bike_pi" value="3.141592653589793"/>
+  <xacro:property name="wheel_radius" value="0.333"/>
+  <xacro:property name="wheel_width" value="0.05"/>
+  <xacro:property name="wheel_mass" value="0.45288"/>
+  <xacro:property name="frame_mass" value="3.07549"/>
+  <xacro:property name="steering_mass" value="1.55391"/>
+
+  <material name="bicycle_blue"><color rgba="0.12 0.32 0.8 1"/></material>
+  <material name="bicycle_black"><color rgba="0.08 0.08 0.08 1"/></material>
+  <material name="bicycle_silver"><color rgba="0.65 0.65 0.68 1"/></material>
+  <material name="bicycle_green"><color rgba="0.1 0.8 0.2 1"/></material>
+
+  <!-- Box inertias are estimates, not the CAD inertia tensors. -->
+  <xacro:macro name="bike_box_inertia" params="mass x y z xyz">
+    <inertial>
+      <origin xyz="${xyz}"/>
+      <mass value="${mass}"/>
+      <inertia ixx="${mass*(y*y+z*z)/12}" ixy="0" ixz="0"
+               iyy="${mass*(x*x+z*z)/12}" iyz="0" izz="${mass*(x*x+y*y)/12}"/>
+    </inertial>
+  </xacro:macro>
+  <link name="base_link"/>
+  <joint name="base_to_frame" type="fixed"><parent link="base_link"/><child link="frame"/></joint>
+  <link name="frame">
+    <visual>
+      <origin xyz="0.93 -0.095205 0.318" rpy="${bike_pi/2} 0 ${bike_pi}"/>
+      <geometry><mesh filename="package://bicycle/meshes/Frame.STL" scale="0.001 0.001 0.001"/></geometry>
+      <material name="bicycle_blue"/>
+    </visual>
+    <!-- Narrow box deliberately approximates only the central frame. -->
+    <collision><origin xyz="0.48 0 0.66"/><geometry><box size="0.62 0.10 0.32"/></geometry></collision>
+    <xacro:bike_box_inertia mass="${frame_mass}" x="0.94" y="0.19" z="0.71" xyz="0.48 0 0.66"/>
+  </link>
+  <link name="steering">
+    <visual>
+      <origin xyz="0.13 -0.290174 -0.44" rpy="${bike_pi/2} 0 ${bike_pi}"/>
+      <geometry><mesh filename="package://bicycle/meshes/Steering.STL" scale="0.001 0.001 0.001"/></geometry>
+      <material name="bicycle_silver"/>
+    </visual>
+    <collision><origin xyz="0.02 0 -0.10"/><geometry><box size="0.08 0.08 0.40"/></geometry></collision>
+    <xacro:bike_box_inertia mass="${steering_mass}" x="0.22" y="0.58" z="0.76" xyz="0.02 0 -0.10"/>
+  </link>
+  <joint name="steering_joint" type="revolute">
+    <parent link="frame"/><child link="steering"/>
+    <origin xyz="0.88 0 0.80"/>
+    <axis xyz="-0.22 0 0.975499872"/>
+    <limit lower="-0.7" upper="0.7" effort="20" velocity="2"/>
+    <dynamics damping="0.1" friction="0.01"/>
+  </joint>
+  <xacro:macro name="bike_wheel" params="name parent xyz">
+    <link name="${name}">
+      <visual>
+        <origin xyz="0.3339405 -0.025029778 -0.3337337" rpy="${bike_pi/2} 0 ${bike_pi}"/>
+        <geometry><mesh filename="package://bicycle/meshes/Wheel.STL" scale="0.001 0.001 0.001"/></geometry>
+        <material name="bicycle_black"/>
+      </visual>
+      <collision>
+        <origin rpy="${bike_pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+      <!-- Thin-hoop approximation about the lateral axle. -->
+      <inertial><mass value="${wheel_mass}"/>
+        <inertia ixx="${wheel_mass*(wheel_radius*wheel_radius/2+wheel_width*wheel_width/12)}"
+                 iyy="${wheel_mass*wheel_radius*wheel_radius}"
+                 izz="${wheel_mass*(wheel_radius*wheel_radius/2+wheel_width*wheel_width/12)}"
+                 ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    <joint name="${name}_joint" type="continuous">
+      <parent link="${parent}"/><child link="${name}"/><origin xyz="${xyz}"/>
+      <axis xyz="0 1 0"/><dynamics damping="0.01" friction="0"/>
+    </joint>
+  </xacro:macro>
+  <xacro:bike_wheel name="wheel1" parent="frame" xyz="0 0 0.333"/>
+  <xacro:bike_wheel name="wheel2" parent="steering" xyz="0.11 0 -0.467"/>
+  <link name="imu_link">
+    <visual><geometry><box size="0.03 0.02 0.01"/></geometry><material name="bicycle_green"/></visual>
+    <collision><geometry><box size="0.03 0.02 0.01"/></geometry></collision>
+    <xacro:bike_box_inertia mass="0.01" x="0.03" y="0.02" z="0.01" xyz="0 0 0"/>
+  </link>
+  <joint name="imu_joint" type="fixed">
+    <parent link="frame"/><child link="imu_link"/><origin xyz="0.45 0 0.82"/>
+  </joint>
+  <!-- bicycle.gazebo is intentionally not instantiated: its sensor configuration
+       is incomplete and it contains a legacy ROS control plugin. -->
+  <xacro:arg name="add_rider" default="false"/>
+  <xacro:arg name="rider_xyz" default="0.29 0 1.01"/>
+  <xacro:if value="$(arg add_rider)">
+    <xacro:include filename="$(find bicycle)/model/seated_rider.urdf.xacro"/>
+    <joint name="rider_saddle_mount" type="fixed">
+      <parent link="frame"/><child link="rider_Pelvis"/>
+      <origin xyz="$(arg rider_xyz)" rpy="0 0 0"/>
+    </joint>
+  </xacro:if>
+</robot>

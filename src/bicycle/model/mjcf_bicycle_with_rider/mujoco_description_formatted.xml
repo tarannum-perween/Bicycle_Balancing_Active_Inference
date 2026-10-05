@@ -1,0 +1,336 @@
+<mujoco model="bicycle">
+  <compiler angle="radian" meshdir="assets/" texturedir="assets/"/>
+  <option timestep="0.001" gravity="0 0 -9.81"/>
+  <default>
+    <geom contype="1" conaffinity="1" friction="1 0.005 0.0001"/>
+    <default class="visual">
+      <geom contype="0" conaffinity="0" group="1"/>
+    </default>
+    <default class="collision">
+      <geom group="3" rgba="0.5 0.5 0.5 0.25"/>
+    </default>
+  </default>
+  <asset>
+    <mesh name="Frame" content_type="model/stl" file="full/Frame.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Steering" content_type="model/stl" file="full/Steering.stl" scale="0.001 0.001 0.001"/>
+    <mesh name="Wheel" content_type="model/stl" file="full/Wheel.stl" scale="0.001 0.001 0.001"/>
+  </asset>
+  <worldbody>
+    <light name="sun" pos="0 0 5" dir="0 0 -1" directional="true" diffuse="0.8 0.8 0.8"/>
+    <geom name="ground" type="plane" size="20 20 0.1" rgba="0.35 0.38 0.35 1"/>
+    <body name="base_link">
+      <body name="frame">
+        <inertial pos="0.48 0 0.66" quat="0.5 0.5 0.5 0.5" mass="3.07549" diaginertia="0.355655 0.235711 0.138448"/>
+        <body name="steering" pos="0.88 0 0.8">
+          <inertial pos="0.02 0 -0.1" mass="1.55391" diaginertia="0.118356 0.0810623 0.0498287"/>
+          <joint name="steering_joint" range="-0.7 0.7" actuatorfrcrange="-20 20" damping="0.1" frictionloss="0.01" axis="-0.22 0 0.9755"/>
+          <body name="wheel2" pos="0.11 0 -0.467">
+            <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+            <joint name="wheel2_joint" damping="0.01" axis="0 1 0"/>
+            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="collision"/>
+            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.08 0.08 0.08 1" mesh="Wheel" class="visual"/>
+            <site name="wheel2" pos="0 0 0" quat="1.0 0 0 0"/>
+          </body>
+          <geom pos="0.13 -0.290174 -0.44" quat="0 0 0.707107 0.707107" type="mesh" mesh="Steering" class="collision"/>
+          <geom pos="0.13 -0.290174 -0.44" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.65 0.65 0.68 1" mesh="Steering" class="visual"/>
+          <site name="steering" pos="0 0 0" quat="1.0 0 0 0"/>
+        </body>
+        <body name="wheel1" pos="0 0 0.333">
+          <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
+          <joint name="wheel1_joint" damping="0.01" axis="0 1 0"/>
+          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="collision"/>
+          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.08 0.08 0.08 1" mesh="Wheel" class="visual"/>
+          <site name="wheel1" pos="0 0 0" quat="1.0 0 0 0"/>
+        </body>
+        <body name="imu_link" pos="0.45 0 0.82">
+          <inertial pos="0 0 0" quat="0 0.707107 0 0.707107" mass="0.01" diaginertia="1.08333e-06 8.33333e-07 4.16667e-07"/>
+          <geom size="0.015 0.01 0.005" type="box" class="collision"/>
+          <geom size="0.015 0.01 0.005" type="box" rgba="0.1 0.8 0.2 1" class="visual"/>
+        </body>
+        <body name="rider_Pelvis" pos="0.29 0 1.01">
+          <inertial pos="0 0 0.049743" quat="0.5 0.5 -0.5 0.5" mass="4.976" diaginertia="0.033653 0.029678 0.011854"/>
+          <body name="rider_L5_f1" pos="-0.000206 0 0.098478">
+            <body name="rider_L5_f2" quat="0.974794 0 0.223106 0">
+              <body name="rider_L5">
+                <inertial pos="0 0 0.047552" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.018868 0.014872"/>
+                <body name="rider_L3_f1" pos="0.000374 0 0.095104">
+                  <body name="rider_L3_f2">
+                    <body name="rider_L3">
+                      <inertial pos="0 0 0.042958" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.017989 0.013993"/>
+                      <body name="rider_T12_f1" pos="0 0 0.085916">
+                        <body name="rider_T12_f2">
+                          <body name="rider_T12">
+                            <inertial pos="0 0 0.042958" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.017989 0.013993"/>
+                            <body name="rider_T8_f1" pos="0 0 0.085916">
+                              <body name="rider_T8_f2">
+                                <body name="rider_T8">
+                                  <inertial pos="0 0 0.059874" quat="0.5 0.5 0.5 0.5" mass="2.488" diaginertia="0.0067278 0.0043289 0.0035473"/>
+                                  <body name="rider_Neck_f1" pos="0 0 0.11975">
+                                    <body name="rider_Neck_f2" quat="0.995004 0 -0.0998334 0">
+                                      <body name="rider_Neck">
+                                        <inertial pos="0 0 0.044626" mass="0.7464" diaginertia="0.0006461 0.0006461 0.00030124"/>
+                                        <body name="rider_Head_f1" pos="0.000152 0 0.089252">
+                                          <body name="rider_Head_f2">
+                                            <body name="rider_Head">
+                                              <inertial pos="0 0 0.089005" mass="2.2392" diaginertia="0.0070955 0.0070955 0.0070955"/>
+                                              <geom size="0.089005" pos="0 0 0.089005" type="sphere" class="collision"/>
+                                              <geom size="0.089005" pos="0 0 0.089005" rgba="0 1 1 1" type="sphere" class="visual"/>
+                                            </body>
+                                          </body>
+                                        </body>
+                                        <geom size="0.014205 0.044626" pos="0 0 0.044626" type="cylinder" class="collision"/>
+                                        <geom size="0.014205 0.044626" pos="0 0 0.044626" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                      </body>
+                                    </body>
+                                  </body>
+                                  <body name="rider_RightShoulder_f1" pos="0 -0.026313 0.067052">
+                                    <body name="rider_RightShoulder_f2">
+                                      <body name="rider_RightShoulder">
+                                        <inertial pos="0 -0.065233 0" quat="0.707107 0.707107 0 0" mass="1.9282" diaginertia="0.0030029 0.0030029 0.00053578"/>
+                                        <body name="rider_RightUpperArm_f1" pos="0 -0.13047 0" quat="0.995228 0.0975767 0 0">
+                                          <body name="rider_RightUpperArm_f2" quat="0.998248 0 0.0591743 0">
+                                            <body name="rider_RightUpperArm" quat="0.856301 0 0 0.516476">
+                                              <inertial pos="0 -0.13497 0" quat="0.707107 0.707107 0 0" mass="1.866" diaginertia="0.011736 0.011736 0.00080917"/>
+                                              <body name="rider_RightForeArm_f1" pos="0 -0.26994 0" quat="0.999746 0.0225505 0 0">
+                                                <body name="rider_RightForeArm_f2" quat="0.999943 0 0.0106666 0">
+                                                  <body name="rider_RightForeArm" quat="0.958767 0 0 0.284195">
+                                                    <inertial pos="0 -0.11124 0" quat="0.707107 0.707107 0 0" mass="1.244" diaginertia="0.0052508 0.0052508 0.00023975"/>
+                                                    <body name="rider_RightHand_f1" pos="7.7e-05 -0.22247 0">
+                                                      <body name="rider_RightHand_f2">
+                                                        <body name="rider_RightHand">
+                                                          <inertial pos="0 -0.083588 0" quat="0.5 0.5 -0.5 0.5" mass="0.3732" diaginertia="0.0012555 0.00091713 0.00043425"/>
+                                                          <body name="rider_RightHandCOM" pos="0 -0.096206 0">
+                                                            <inertial pos="0 0 0" mass="1e-05" diaginertia="0 0 0"/>
+                                                          </body>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 -0.083588 0" type="box" class="collision"/>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 -0.083588 0" type="box" rgba="0 1 1 1" class="visual"/>
+                                                        </body>
+                                                      </body>
+                                                    </body>
+                                                    <geom size="0.019633 0.111235" pos="0 -0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                                    <geom size="0.019633 0.111235" pos="0 -0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                                  </body>
+                                                </body>
+                                              </body>
+                                              <geom size="0.029449 0.13497" pos="0 -0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                              <geom size="0.029449 0.13497" pos="0 -0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                            </body>
+                                          </body>
+                                        </body>
+                                        <geom size="0.023574 0.065235" pos="0 -0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                        <geom size="0.023574 0.065235" pos="0 -0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                      </body>
+                                    </body>
+                                  </body>
+                                  <body name="rider_LeftShoulder_f1" pos="0 0.026313 0.067052">
+                                    <body name="rider_LeftShoulder_f2">
+                                      <body name="rider_LeftShoulder">
+                                        <inertial pos="0 0.065233 0" quat="0.707107 0.707107 0 0" mass="1.9282" diaginertia="0.0030029 0.0030029 0.00053578"/>
+                                        <body name="rider_LeftUpperArm_f1" pos="0 0.13047 0" quat="0.995228 -0.0975808 0 0">
+                                          <body name="rider_LeftUpperArm_f2" quat="0.998248 0 0.0591722 0">
+                                            <body name="rider_LeftUpperArm" quat="0.856302 0 0 -0.516476">
+                                              <inertial pos="0 0.13497 0" quat="0.707107 0.707107 0 0" mass="1.866" diaginertia="0.011736 0.011736 0.00080917"/>
+                                              <body name="rider_LeftForeArm_f1" pos="0 0.26994 0" quat="0.999746 -0.0225595 0 0">
+                                                <body name="rider_LeftForeArm_f2" quat="0.999943 0 0.0106574 0">
+                                                  <body name="rider_LeftForeArm" quat="0.958767 0 0 -0.284194">
+                                                    <inertial pos="0 0.11124 0" quat="0.707107 0.707107 0 0" mass="1.244" diaginertia="0.0052508 0.0052508 0.00023975"/>
+                                                    <body name="rider_LeftHand_f1" pos="7.7e-05 0.22247 0">
+                                                      <body name="rider_LeftHand_f2">
+                                                        <body name="rider_LeftHand">
+                                                          <inertial pos="0 0.083588 0" quat="0.5 0.5 -0.5 0.5" mass="0.3732" diaginertia="0.0012555 0.00091713 0.00043425"/>
+                                                          <body name="rider_LeftHandCOM" pos="0 0.096206 0">
+                                                            <inertial pos="0 0 0" mass="1e-05" diaginertia="0 0 0"/>
+                                                          </body>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 0.083588 0" type="box" class="collision"/>
+                                                          <geom size="0.055725 0.08359 0.019633" pos="0 0.083588 0" type="box" rgba="0 1 1 1" class="visual"/>
+                                                        </body>
+                                                      </body>
+                                                    </body>
+                                                    <geom size="0.019633 0.111235" pos="0 0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                                    <geom size="0.019633 0.111235" pos="0 0.11124 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                                  </body>
+                                                </body>
+                                              </body>
+                                              <geom size="0.029449 0.13497" pos="0 0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                              <geom size="0.029449 0.13497" pos="0 0.13497 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                            </body>
+                                          </body>
+                                        </body>
+                                        <geom size="0.023574 0.065235" pos="0 0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" class="collision"/>
+                                        <geom size="0.023574 0.065235" pos="0 0.065233 0" quat="0.707105 0.707108 0 0" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                                      </body>
+                                    </body>
+                                  </body>
+                                  <geom size="0.067285 0.026313 0.059875" pos="0 0 0.059874" type="box" class="collision"/>
+                                  <geom size="0.067285 0.026313 0.059875" pos="0 0 0.059874" type="box" rgba="0 1 1 1" class="visual"/>
+                                </body>
+                              </body>
+                            </body>
+                            <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" class="collision"/>
+                            <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" rgba="0 1 1 1" class="visual"/>
+                          </body>
+                        </body>
+                      </body>
+                      <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" class="collision"/>
+                      <geom size="0.069075 0.081615 0.042958" pos="0 0 0.042958" type="box" rgba="0 1 1 1" class="visual"/>
+                    </body>
+                  </body>
+                </body>
+                <geom size="0.069075 0.081615 0.047552" pos="0 0 0.047552" type="box" class="collision"/>
+                <geom size="0.069075 0.081615 0.047552" pos="0 0 0.047552" type="box" rgba="0 1 1 1" class="visual"/>
+              </body>
+            </body>
+          </body>
+          <body name="rider_RightUpperLeg_f1" pos="0.000103 -0.081614 0.001009">
+            <body name="rider_RightUpperLeg_f2" quat="0.911039 0 -0.412321 0">
+              <body name="rider_RightUpperLeg">
+                <inertial pos="0 0 -0.22449" mass="7.775" diaginertia="0.13681 0.13681 0.01241"/>
+                <body name="rider_RightLowerLeg_f1" pos="3.6e-05 0 -0.44898">
+                  <body name="rider_RightLowerLeg_f2" quat="0.748499 0 0.663135 0">
+                    <body name="rider_RightLowerLeg">
+                      <inertial pos="0 0 -0.20304" mass="2.2703" diaginertia="0.031992 0.031992 0.0015867"/>
+                      <body name="rider_RightFoot_f1" pos="0.000205 0 -0.40608">
+                        <body name="rider_RightFoot_f2" quat="0.955336 0 -0.29552 0">
+                          <body name="rider_RightFoot">
+                            <inertial pos="0.054652 0 -0.039254" quat="0.5 0.5 0.5 0.5" mass="0.8086" diaginertia="0.0025944 0.0025558 0.00079209"/>
+                            <body name="rider_RightToe_f1" pos="0.14456 0 -0.064752">
+                              <body name="rider_RightToe_f2">
+                                <body name="rider_RightToe">
+                                  <inertial pos="0.030086 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.0933" diaginertia="7.1624e-05 4.5038e-05 2.9717e-05"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" class="collision"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" rgba="0 1 1 1" class="visual"/>
+                                </body>
+                              </body>
+                            </body>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" class="collision"/>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" rgba="0 1 1 1" class="visual"/>
+                          </body>
+                        </body>
+                      </body>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" class="collision"/>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                    </body>
+                  </body>
+                </body>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" class="collision"/>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" rgba="0 1 1 1" class="visual"/>
+              </body>
+            </body>
+          </body>
+          <body name="rider_LeftUpperLeg_f1" pos="0.000103 0.081614 0.001009">
+            <body name="rider_LeftUpperLeg_f2" quat="0.911039 0 -0.412321 0">
+              <body name="rider_LeftUpperLeg">
+                <inertial pos="0 0 -0.22449" mass="7.775" diaginertia="0.13681 0.13681 0.01241"/>
+                <body name="rider_LeftLowerLeg_f1" pos="3.6e-05 0 -0.44898">
+                  <body name="rider_LeftLowerLeg_f2" quat="0.748499 0 0.663135 0">
+                    <body name="rider_LeftLowerLeg">
+                      <inertial pos="0 0 -0.20304" mass="2.2703" diaginertia="0.031992 0.031992 0.0015867"/>
+                      <body name="rider_LeftFoot_f1" pos="0.000205 0 -0.40608">
+                        <body name="rider_LeftFoot_f2" quat="0.955336 0 -0.29552 0">
+                          <body name="rider_LeftFoot">
+                            <inertial pos="0.054652 0 -0.039254" quat="0.5 0.5 0.5 0.5" mass="0.8086" diaginertia="0.0025944 0.0025558 0.00079209"/>
+                            <body name="rider_LeftToe_f1" pos="0.14456 0 -0.064752">
+                              <body name="rider_LeftToe_f2">
+                                <body name="rider_LeftToe">
+                                  <inertial pos="0.030086 0 0" quat="0.5 0.5 -0.5 0.5" mass="0.0933" diaginertia="7.1624e-05 4.5038e-05 2.9717e-05"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" class="collision"/>
+                                  <geom size="0.0300865 0.0373875 0.0070955" pos="0.030086 0 0" type="box" rgba="0 1 1 1" class="visual"/>
+                                </body>
+                              </body>
+                            </body>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" class="collision"/>
+                            <geom size="0.089915 0.0373875 0.0392545" pos="0.054652 0 -0.039254" type="box" rgba="0 1 1 1" class="visual"/>
+                          </body>
+                        </body>
+                      </body>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" class="collision"/>
+                      <geom size="0.037388 0.20304" pos="0 0 -0.20304" type="cylinder" rgba="0 1 1 1" class="visual"/>
+                    </body>
+                  </body>
+                </body>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" class="collision"/>
+                <geom size="0.0565 0.22449" pos="0 0 -0.22449" type="cylinder" rgba="0 1 1 1" class="visual"/>
+              </body>
+            </body>
+          </body>
+          <geom size="0.069075 0.12457 0.0487345" pos="0 0 0.049743" type="box" class="collision"/>
+          <geom size="0.069075 0.12457 0.0487345" pos="0 0 0.049743" type="box" rgba="0 1 1 1" class="visual"/>
+        </body>
+        <geom pos="0.93 -0.095205 0.318" quat="0 0 0.707107 0.707107" type="mesh" mesh="Frame" class="collision"/>
+        <geom pos="0.93 -0.095205 0.318" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.12 0.32 0.8 1" mesh="Frame" class="visual"/>
+      </body>
+    </body>
+    <site name="base_link" pos="0 0 0" quat="1.0 0 0 0"/>
+    <site name="frame" pos="0 0 0" quat="1.0 0 0 0"/>
+    <site name="imu_link" pos="0.45 0 0.82" quat="1.0 0 0 0"/>
+    <site name="rider_Pelvis" pos="0.29 0 1.01" quat="1.0 0 0 0"/>
+    <site name="rider_L5_f1" pos="0.289794 0 1.108478" quat="1.0 0 0 0"/>
+    <site name="rider_L5_f2" pos="0.289794 0 1.108478" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_L5" pos="0.289794 0 1.108478" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_L3_f1" pos="0.3314977293723943 0 1.1939514441123913" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_L3_f2" pos="0.3314977293723943 0 1.1939514441123913" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_L3" pos="0.3314977293723943 0 1.1939514441123913" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T12_f1" pos="0.36886822820109477 0 1.271314257358124" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T12_f2" pos="0.36886822820109477 0 1.271314257358124" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T12" pos="0.36886822820109477 0 1.271314257358124" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T8_f1" pos="0.40623872702979524 0 1.3486770706038564" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T8_f2" pos="0.40623872702979524 0 1.3486770706038564" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_T8" pos="0.40623872702979524 0 1.3486770706038564" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_Neck_f1" pos="0.45832584973961504 0 1.4565056111105896" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_Neck_f2" pos="0.45832584973961504 0 1.4565056111105896" quat="0.9921976672293289 0 0.1246747333852277 0"/>
+    <site name="rider_Neck" pos="0.45832584973961504 0 1.4565056111105896" quat="0.9921976672293289 0 0.1246747333852277 0"/>
+    <site name="rider_Head_f1" pos="0.48055442259909975 0 1.5429453771713013" quat="0.9921976672293289 0 0.1246747333852277 0"/>
+    <site name="rider_Head_f2" pos="0.48055442259909975 0 1.5429453771713013" quat="0.9921976672293289 0 0.1246747333852277 0"/>
+    <site name="rider_Head" pos="0.48055442259909975 0 1.5429453771713013" quat="0.9921976672293289 0 0.1246747333852277 0"/>
+    <site name="rider_RightShoulder_f1" pos="0.4354040360230214 -0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_RightShoulder_f2" pos="0.4354040360230214 -0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_RightShoulder" pos="0.4354040360230214 -0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_RightUpperArm_f1" pos="0.4354040360230214 -0.156783 1.4090538497108083" quat="0.9701423984943539 0.09511717941550121 0.2220417006096377 -0.021769979651840597"/>
+    <site name="rider_RightUpperArm_f2" pos="0.4354040360230214 -0.156783 1.4090538497108083" quat="0.955303216455946 0.09623872598545608 0.279060127562004 -0.0161033367566633"/>
+    <site name="rider_RightUpperArm" pos="0.4354040360230214 -0.156783 1.4090538497108083" quat="0.8263444494053737 0.22653734720894536 0.18925453097286563 0.47960233919644757"/>
+    <site name="rider_RightForeArm_f1" pos="0.6262211190240325 -0.274834470849501 1.2589862160743222" quat="0.8210257885155546 0.24511420468007947 0.20002166795114787 0.4752125983246915"/>
+    <site name="rider_RightForeArm_f2" pos="0.6262211190240325 -0.274834470849501 1.2589862160743222" quat="0.8188455314439311 0.24003136215369733 0.2087678344282316 0.4778000964054873"/>
+    <site name="rider_RightForeArm" pos="0.6262211190240325 -0.274834470849501 1.2589862160743222" quat="0.6492934712416466 0.2894647645469753 0.13194397900236707 0.690810339162465"/>
+    <site name="rider_RightHand_f1" pos="0.8088010776298715 -0.24761426998193073 1.1348229114742139" quat="0.6492934712416466 0.2894647645469753 0.13194397900236707 0.690810339162465"/>
+    <site name="rider_RightHand_f2" pos="0.8088010776298715 -0.24761426998193073 1.1348229114742139" quat="0.6492934712416466 0.2894647645469753 0.13194397900236707 0.690810339162465"/>
+    <site name="rider_RightHand" pos="0.8088010776298715 -0.24761426998193073 1.1348229114742139" quat="0.6492934712416466 0.2894647645469753 0.13194397900236707 0.690810339162465"/>
+    <site name="rider_RightHandCOM" pos="0.8877564779517706 -0.23587544964205706 1.0811215214266852" quat="0.6492934712416466 0.2894647645469753 0.13194397900236707 0.690810339162465"/>
+    <site name="rider_LeftShoulder_f1" pos="0.4354040360230214 0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_LeftShoulder_f2" pos="0.4354040360230214 0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_LeftShoulder" pos="0.4354040360230214 0.026313 1.4090538497108083" quat="0.9747941070689432 0 0.22310636213174548 0"/>
+    <site name="rider_LeftUpperArm_f1" pos="0.4354040360230214 0.156783 1.4090538497108083" quat="0.9701420100277025 -0.09512114147626342 0.22204161169918912 0.021770886469964338"/>
+    <site name="rider_LeftUpperArm_f2" pos="0.4354040360230214 0.156783 1.4090538497108083" quat="0.9553034309779513 -0.09624270030896158 0.27905797194905385 0.016104213444772936"/>
+    <site name="rider_LeftUpperArm" pos="0.4354040360230214 0.156783 1.4090538497108083" quat="0.82634531753718 -0.22653954569613044 0.1892507418925229 -0.4796013001580559"/>
+    <site name="rider_LeftForeArm_f1" pos="0.6262211190544893 0.27483447115489157 1.2589862163532861" quat="0.8210244035875297 -0.24512380197274475 0.20002212783532267 -0.47520984711640574"/>
+    <site name="rider_LeftForeArm_f2" pos="0.6262211190544893 0.27483447115489157 1.2589862163532861" quat="0.8188460680637364 -0.2400453971121165 0.20876072362057874 -0.4777952327255447"/>
+    <site name="rider_LeftForeArm" pos="0.6262211190544893 0.27483447115489157 1.2589862163532861" quat="0.6492956422167832 -0.2894761475646768 0.13193328765863013 -0.6908055707628549"/>
+    <site name="rider_LeftHand_f1" pos="0.8088010775962671 0.24761426988954066 1.134822911746182" quat="0.6492956422167832 -0.2894761475646768 0.13193328765863013 -0.6908055707628549"/>
+    <site name="rider_LeftHand_f2" pos="0.8088010775962671 0.24761426988954066 1.134822911746182" quat="0.6492956422167832 -0.2894761475646768 0.13193328765863013 -0.6908055707628549"/>
+    <site name="rider_LeftHand" pos="0.8088010775962671 0.24761426988954066 1.134822911746182" quat="0.6492956422167832 -0.2894761475646768 0.13193328765863013 -0.6908055707628549"/>
+    <site name="rider_LeftHandCOM" pos="0.8877564772638367 0.23587544916524997 1.0811215208206455" quat="0.6492956422167832 -0.2894761475646768 0.13193328765863013 -0.6908055707628549"/>
+    <site name="rider_RightUpperLeg_f1" pos="0.290103 -0.081614 1.011009" quat="1.0 0 0 0"/>
+    <site name="rider_RightUpperLeg_f2" pos="0.290103 -0.081614 1.011009" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_RightUpperLeg" pos="0.290103 -0.081614 1.011009" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_RightLowerLeg_f1" pos="0.6274366356931405 -0.081614 0.7147168132551458" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_RightLowerLeg_f2" pos="0.6274366356931405 -0.081614 0.7147168132551458" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_RightLowerLeg" pos="0.6274366356931405 -0.081614 0.7147168132551458" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_RightFoot_f1" pos="0.398315813897941 -0.081614 0.3794487750455776" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_RightFoot_f2" pos="0.398315813897941 -0.081614 0.3794487750455776" quat="1.0 0 0 0"/>
+    <site name="rider_RightFoot" pos="0.398315813897941 -0.081614 0.3794487750455776" quat="1.0 0 0 0"/>
+    <site name="rider_RightToe_f1" pos="0.542875813897941 -0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+    <site name="rider_RightToe_f2" pos="0.542875813897941 -0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+    <site name="rider_RightToe" pos="0.542875813897941 -0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+    <site name="rider_LeftUpperLeg_f1" pos="0.290103 0.081614 1.011009" quat="1.0 0 0 0"/>
+    <site name="rider_LeftUpperLeg_f2" pos="0.290103 0.081614 1.011009" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_LeftUpperLeg" pos="0.290103 0.081614 1.011009" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_LeftLowerLeg_f1" pos="0.6274366356931405 0.081614 0.7147168132551458" quat="0.9110387329540336 0 -0.4123207817434248 0"/>
+    <site name="rider_LeftLowerLeg_f2" pos="0.6274366356931405 0.081614 0.7147168132551458" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_LeftLowerLeg" pos="0.6274366356931405 0.081614 0.7147168132551458" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_LeftFoot_f1" pos="0.398315813897941 0.081614 0.3794487750455776" quat="0.9553364891256061 0 0.2955202066613395 0"/>
+    <site name="rider_LeftFoot_f2" pos="0.398315813897941 0.081614 0.3794487750455776" quat="1.0 0 0 0"/>
+    <site name="rider_LeftFoot" pos="0.398315813897941 0.081614 0.3794487750455776" quat="1.0 0 0 0"/>
+    <site name="rider_LeftToe_f1" pos="0.542875813897941 0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+    <site name="rider_LeftToe_f2" pos="0.542875813897941 0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+    <site name="rider_LeftToe" pos="0.542875813897941 0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
+  </worldbody>
+</mujoco>

@@ -1,0 +1,19 @@
+<?xml version = "1.0" ?>
+<robot name = "/staebltech_simulation_platform" xmlns:xacro ="http://ros.org/wiki/xacro"> 
+<!-- frame -->
+	<xacro:include filename="$(find cmgdevice_description)/urdf/cmgdevice.urdf.xacro" />
+
+	<!-- Include a bicycle -->
+    <xacro:include filename="$(find bicycle)/model/bicycle.urdf.xacro" />
+
+    <!-- instantiate the bicycle -->
+    <!-- xacro:staebltech_bicycle prefix="bicycle_"/ -->
+    <!--xacro:cmg_device prefix="cmgdevice_"/ -->
+
+    <joint name="gripper_fixed" type="fixed">
+        <origin xyz="0.38 -0.09  0.48" rpy="0 0 0"/>
+        <parent link="frame"/>
+        <child link="bar_1B"/>
+    </joint>   
+
+</robot>

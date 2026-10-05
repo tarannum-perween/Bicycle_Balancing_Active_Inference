@@ -1,0 +1,58 @@
+# #!/usr/bin/python3
+# 
+# import sys, os
+# import numpy as np
+# from pathlib import Path
+# 
+# # *****************************************************************************
+# # **                                                                         **
+# # **                     User defined                                        **
+# # **                                                                         **
+# # *****************************************************************************
+# 
+# # YAML config file prefix name
+# yaml_prefix = 'initial_CMG_prototype'
+# 
+# # Aluminum material density est in Kg/M^3
+# density_Al =2700
+# density_disk = density_Al
+# density_annulus = density_Al
+# 
+# # flywheel parameters (inches):
+# disk_rad = 3.5
+# disk_thick = 0.5
+# annulus_radout = 3.5
+# annulus_radin = 3.0
+# annulus_thick = 0.5
+# 
+# # motor parameters
+# flywheel_servo_mass = 0.559 # Kg mass
+# torque_servo_mass = 1.089 # Kg mass
+# flywheel_max_speed = 5670 # RPM
+# flywheel_Kv = 270 # RPM/Volt, battery 18.5V nominal, 21 V max full charge
+# torque_servo_Tnominal = 11.3 # N*m
+# torque_servo_Tstall = 22.6 # N*m stall point
+# 
+
+links:
+    disk_rad: 0.08890000
+    disk_thick: 0.01270000
+    annulus_radout: 0.08890000
+    annulus_radin: 0.07620000
+    annulus_thick: 0.01270000
+    disk1_mass: 0.85137497
+    annulus_mass: 0.22587499
+    Ixx_disk: 0.00169359
+    Iyy_disk: 0.00169359
+    Izz_disk: 0.00336430
+    Ixx_ann: 0.00077720
+    Iyy_ann: 0.00077720
+    Izz_ann: 0.00154833
+
+actuators:
+    flywheel_servo_mass: 0.55900000
+    torque_servo_mass: 1.08900000
+    flywheel_max_speed: 5670.00000000
+    flywheel_Kv: 270.00000000
+    torque_servo_Tnominal: 11.30000000
+    torque_servo_Tstall: 22.60000000

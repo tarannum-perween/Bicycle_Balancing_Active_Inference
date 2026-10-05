@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<xacro:macro name="bicycle_gazebo" xmlns:xacro="http://ros.org"> 
+
+    <!-- Load desired sensor characteristics from main YAML file that 'points' to a specific set of sensor parameters -->
+    <xacro:property name="yaml_sensors_file_ptr" value="$(find cmgdevice_description)/config/sensor_params.yaml" />
+    <xacro:property name="sensor_params_file" value="${xacro.load_yaml(yaml_sensors_file_ptr)}" />
+    <xacro:property name="sensors_yaml_file" value="${sensor_params_file['sensor_params_file']}" />
+    <xacro:property name="sensor_params" value="${xacro.load_yaml(sensors_yaml_file)}" />
+
+    <!-- 2. Extract specific variables for use in elements -->
+    <xacro:property name="accel_x_bias"   value="${sensor_params['imu']['accel_x']['bias']}" />
+    <xacro:property name="accel_y_bias" value="${sensor_params['imu']['accel_y']['bias']}" />
+    <xacro:property name="accel_z_bias" value="${sensor_params['imu']['accel_z']['bias']}" />
+    <xacro:property name="accel_x_stdev" value="${sensor_params['imu']['accel_x']['stdev']}" />
+    <xacro:property name="accel_y_stdev" value="${sensor_params['imu']['accel_y']['stdev']}" />
+    <xacro:property name="accel_z_stdev" value="${sensor_params['imu']['accel_z']['stdev']}" />
+    <xacro:property name="angvel_x_bias"   value="${sensor_params['imu']['angvel_x']['bias']}" />
+    <xacro:property name="angvel_y_bias" value="${sensor_params['imu']['angvel_y']['bias']}" />
+    <xacro:property name="angvel_z_bias" value="${sensor_params['imu']['angvel_z']['bias']}" />
+    <xacro:property name="angvel_x_stdev" value="${sensor_params['imu']['angvel_x']['stdev']}" />
+    <xacro:property name="angvel_y_stdev" value="${sensor_params['imu']['angvel_y']['stdev']}" />
+    <xacro:property name="angvel_z_stdev" value="${sensor_params['imu']['angvel_z']['stdev']}" />
+    <xacro:property name="att_x_bias"   value="${sensor_params['imu']['att_x']['bias']}" />
+    <xacro:property name="att_y_bias" value="${sensor_params['imu']['att_y']['bias']}" />
+    <xacro:property name="att_z_bias" value="${sensor_params['imu']['att_z']['bias']}" />
+    <xacro:property name="att_x_stdev" value="${sensor_params['imu']['att_x']['stdev']}" />
+    <xacro:property name="att_y_stdev" value="${sensor_params['imu']['att_y']['stdev']}" />
+    <xacro:property name="att_z_stdev" value="${sensor_params['imu']['att_z']['stdev']}" />
+
+    <xacro:property name="imu_updatefreq" value="${sensor_params['imu']['freq']}" />
+    <xacro:property name="imu_topic" value="${sensor_params['imu']['topic']}" />
+    
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/bicycle</robotNamespace>
+        </plugin>
+    </gazebo>
+    
+    <gazebo reference="imu_link">
+        <material>Gazebo/Green</material>
+        <sensor type="imu" name="imu_sensor">
+            <always_on>true</always_on>
+            <update_rate>100.0</update_rate>
+            <visualize>true</visualize>
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
+        </sensor>
+    </gazebo>
+
+    <gazebo reference= "frame" >
+        <material>Gazebo/Blue</material>
+        <mu1 value="0.6"/>
+        <mu2 value="0.8"/>
+    </gazebo>
+
+    <gazebo reference= "wheel1" >
+        <material>Gazebo/Black</material>
+        <mu1 value="0.7"/>
+        <mu2 value="0.6"/>
+    </gazebo>
+
+    <gazebo reference= "wheel2" >
+        <material>Gazebo/Black</material>
+        <mu1 value="0.7"/>
+        <mu2 value="0.6"/>
+    </gazebo>
+
+    <gazebo reference= "steering" >
+        <material>Gazebo/Blue</material>
+        <mu1 value="0.6"/>
+        <mu2 value="0.8"/>
+    </gazebo>
+
+</xacro:macro>

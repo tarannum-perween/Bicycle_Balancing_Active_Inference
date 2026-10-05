@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="cmg_device">
+
+<!-- obtain the Control Moment Gyro device definitions -->
+<!-- 1. Load the YAML file as a dictionary property -->
+  <xacro:property name="yaml_file_ptr" value="$(find cmgdevice_description)/config/cmgparams.yaml" />
+  <xacro:property name="yaml_file_name" value="${xacro.load_yaml(yaml_file_ptr)}" />
+  <xacro:property name="yaml_file" value="${yaml_file_name['yaml_param_file'] if yaml_file_name['yaml_param_file'].startswith('/') else '$(find cmgdevice_description)/config/' + yaml_file_name['yaml_param_file']}" />
+  <xacro:property name="cmg_params" value="${xacro.load_yaml(yaml_file)}" />
+
+  <!-- 2. Extract specific variables for use in elements -->
+  <xacro:property name="disk_rad"   value="${cmg_params['links']['disk_rad']}" />
+  <xacro:property name="disk_thick" value="${cmg_params['links']['disk_thick']}" />
+  <xacro:property name="annulus_radout" value="${cmg_params['links']['annulus_radout']}" />
+  <xacro:property name="annulus_radin" value="${cmg_params['links']['annulus_radin']}" />
+  <xacro:property name="annulus_thick" value="${cmg_params['links']['annulus_thick']}" />
+  <xacro:property name="disk1_mass" value="${cmg_params['links']['disk1_mass']}" />
+  <xacro:property name="annulus_mass" value="${cmg_params['links']['annulus_mass']}" />
+  <xacro:property name="Ixx_disk" value="${cmg_params['links']['Ixx_disk']}" />
+  <xacro:property name="Iyy_disk" value="${cmg_params['links']['Iyy_disk']}" />
+  <xacro:property name="Izz_disk" value="${cmg_params['links']['Izz_disk']}" />
+  <xacro:property name="Ixx_ann" value="${cmg_params['links']['Ixx_ann']}" />
+  <xacro:property name="Iyy_ann" value="${cmg_params['links']['Iyy_ann']}" />
+  <xacro:property name="Izz_ann" value="${cmg_params['links']['Izz_ann']}" />
+
+  <xacro:property name="flywheel_servo_mass" value="${cmg_params['actuators']['flywheel_servo_mass']}" />
+  <xacro:property name="torque_servo_mass" value="${cmg_params['actuators']['torque_servo_mass']}" />
+  <xacro:property name="flywheel_max_speed" value="${cmg_params['actuators']['flywheel_max_speed']}" />
+  <xacro:property name="flywheel_Kv" value="${cmg_params['actuators']['flywheel_Kv']}" />
+  <xacro:property name="torque_servo_Tnominal" value="${cmg_params['actuators']['torque_servo_Tnominal']}" />
+  <xacro:property name="torque_servo_Tstall" value="${cmg_params['actuators']['torque_servo_Tstall']}" />
+
+  <!-- needed Gazebo defs -->
+
+  <!-- defs for device 'frame' -->
+  <!-- assume 80-20 1010 or 1010S specs of 0.51 lbs/ft.=> 0.2313 kg/ft. => 0.759 kg/m  -->
+  <xacro:property name="bar_lin_density" value="0.758858268" />
+  <xacro:property name="bar_xsec"        value="0.025" />
+  <xacro:property name="disk_clearance"  value="0.005" />
+  <xacro:property name="bar_xsec_sq"     value="${bar_xsec * bar_xsec}" />
+  
+  <xacro:property name="bar1_length"     value="${2.0*(disk_rad + bar_xsec + disk_clearance) }" />
+  <xacro:property name="bar1_mass"       value="${bar_lin_density*bar1_length}" />
+  
+  <xacro:property name="bar2_length"     value="${2.0*(disk_rad + disk_clearance) }" />
+  <xacro:property name="bar2_mass"       value="${bar_lin_density*bar2_length}" />
+  
+  <xacro:property name="Ip_comaxis_bar1"  value="${bar1_mass*(bar1_length**2 + bar_xsec**2)/12.0 }" />
+  <xacro:property name="Ip_xsection_bar1" value="${bar1_mass*(bar_xsec**2)/6.0}" />
+  <xacro:property name="Ip_comaxis_bar2"  value="${bar2_mass*(bar2_length**2 + bar_xsec**2)/12.0 }" />
+  <xacro:property name="Ip_xsection_bar2" value="${bar2_mass*(bar_xsec**2)/6.0}" />
+
+  <xacro:property name="fw_servo_R"   value="0.025" />
+  <xacro:property name="fw_servo_L"   value="0.05" />
+  <xacro:property name="torq_servo_R"  value="0.045" />
+  <xacro:property name="torq_servo_L"  value="0.046" />
+  <xacro:property name="Izz_fw_servo" value="${ flywheel_servo_mass*fw_servo_R**2/2.0}" />
+  <xacro:property name="Ixx_fw_servo" value="${ flywheel_servo_mass*( fw_servo_R**2/4.0 + fw_servo_L**2/12.0 ) }" />
+  <xacro:property name="Iyy_fw_servo" value="${Ixx_fw_servo}" />
+  <xacro:property name="Izz_torq_servo" value="${torque_servo_mass*torq_servo_R**2/2.0}" />
+  <xacro:property name="Ixx_torq_servo" value="${torque_servo_mass*(torq_servo_R**2/4.0 + torq_servo_L**2/12.0 )}" />
+  <xacro:property name="Iyy_torq_servo" value="${Ixx_torq_servo}" />
+
+  <xacro:property name="torq_servo_name" value="torque_servo" />
+  <xacro:property name="torq_servo_x" value="0.0" />
+  <xacro:property name="torq_servo_y" value="0.0" />
+  <xacro:property name="torq_servo_z" value="${bar2_length + torq_servo_L*0.5 + 1.5*bar_xsec}" />
+
+  <xacro:property name="fw_servo_name" value="flywheel_servo" />
+  <xacro:property name="fw_servo_rx" value="${pi/2.0}" />
+  <xacro:property name="fw_servo_ry" value="0.0" />
+  <xacro:property name="fw_servo_rz" value="0.0" />
+  <xacro:property name="fw_servo_x" value="0.0" />
+  <!-- xacro:property name="fw_servo_y" value="${2.0*disk_thick + 0.5*fw_servo_L}" /> -->
+  <xacro:property name="fw_servo_y" value="${0.5*fw_servo_L}" />
+  <!-- xacro:property name="fw_servo_y" value="1.0" / -->
+  <xacro:property name="fw_servo_z" value="${0.5*(bar2_length + bar_xsec)}" />
+  <!-- xacro:property name="fw_servo_z" value="0.0" / -->
+
+
+  <xacro:property name="fw_disk_rx" value="${fw_servo_rx}" />
+  <xacro:property name="fw_disk_ry" value="${fw_servo_rx}" />
+  <xacro:property name="fw_disk_rz" value="${fw_servo_rz}" />
+  <xacro:property name="fw_disk_x" value="0.0" />
+  <xacro:property name="fw_disk_y" value="${-0.5*disk_thick}" />
+  <xacro:property name="fw_disk_z" value="${0.5*(bar2_length + bar_xsec)}" />
+  <!--xacro:property name="fw_disk_z" value="0.0" /> -->
+
+  <xacro:property name="annulus_rx" value="${fw_disk_rx}" />
+  <xacro:property name="annulus_ry" value="${fw_disk_ry}" />
+  <xacro:property name="annulus_rz" value="${fw_disk_rz}" />
+  <xacro:property name="annulus_x" value="${fw_disk_x}" />
+  <xacro:property name="annulus_y" value="${fw_disk_y + -0.5*annulus_thick}" />
+  <xacro:property name="annulus_z" value="${fw_disk_z}" />
+
+  <!-- Base Link Frame, orientation: '1'=>horizontal, '2'=>vertical -->
+  <xacro:macro name="frame_bar" params="orientation prefix *origin_update">
+    <link name="bar_${orientation}${prefix}">
+
+        <xacro:if value="${orientation == 1 }" >
+        <visual>
+          <geometry>
+            <box size="${bar1_length} ${bar_xsec} ${bar_xsec}" />
+          </geometry>
+          <xacro:insert_block name="origin_update" />
+          <material name="frame_color" />
+        </visual>
+
+        <collision>
+          <geometry>
+            <box size="${bar1_length} ${bar_xsec} ${bar_xsec}" />
+          </geometry>
+          <xacro:insert_block name="origin_update" />
+        </collision>
+
+        <inertial>
+          <mass value="${bar1_mass}" />
+          <inertia ixx="${Ip_xsection_bar1}" ixy="0" ixz="0" iyy="${Ip_comaxis_bar1}" iyz="0" izz="${Ip_comaxis_bar1}" />
+          <xacro:insert_block name="origin_update" />
+        </inertial>
+      </xacro:if>
+
+      <xacro:if value="${orientation == 2 }" >
+        <visual>
+          <geometry>
+            <box size="${bar_xsec} ${bar_xsec} ${bar2_length}" />
+          </geometry>
+          <xacro:insert_block name="origin_update" />
+          <material name="frame_color" />
+        </visual>
+
+        <collision>
+          <geometry>
+            <box size="${bar_xsec} ${bar_xsec} ${bar2_length}" />
+          </geometry>
+          <xacro:insert_block name="origin_update" />
+        </collision>
+
+        <inertial>
+          <mass value="${bar2_mass}" />
+          <inertia ixx="${Ip_comaxis_bar2}" ixy="0" ixz="0" iyy="${Ip_xsection_bar2}" iyz="0" izz="${Ip_xsection_bar2}" />
+          <xacro:insert_block name="origin_update" />
+        </inertial>
+      </xacro:if>
+    </link>
+  </xacro:macro>
+
+  <!-- "assemble the frame"-->
+  <xacro:macro name="assemble_frame" params="p_orientation p_prefix c_orientation c_prefix *origin_update">
+    <joint name="bar_${p_orientation}${p_prefix}_${c_orientation}${c_prefix}" type="fixed" >
+      <parent link="bar_${p_orientation}${p_prefix}"/>
+      <child link="bar_${c_orientation}${c_prefix}"/>
+      <xacro:insert_block name="origin_update" />
+     </joint>
+  </xacro:macro>
+
+  <!-- include gazebo based functionality -->
+  <xacro:include filename="$(find cmgdevice_description)/urdf/cmgdevice.gazebo" />
+
+    <!-- Materials for rviz Visualization -->
+  <material name="flywheel_color">
+    <color rgba="1.0 0.1 0.1 1.0"/>
+  </material>
+
+  <material name="frame_color">
+    <color rgba="0.5 0.7 0.5 1.0"/>
+  </material>
+
+  <material name="actuator_color">
+    <color rgba="0.3 0.3 0.3 1.0" />
+  </material>
+
+  <material name="flywheel_texture">
+    <texture filename="file://$(find cmgdevice_description)/textures/pieslice512x512.jpg" />
+  </material>
+
+  <link name="${torq_servo_name}">
+    <visual>
+      <geometry>
+        <cylinder length="${torq_servo_L}" radius="${torq_servo_R}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="${torq_servo_x} ${torq_servo_y} ${torq_servo_z}"/>
+      <material name="actuator_color" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${torq_servo_L}" radius="${torq_servo_R}"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="${torq_servo_x} ${torq_servo_y} ${torq_servo_z}"/>
+    </collision>
+
+    <inertial>
+      <mass value="${torque_servo_mass}" />
+      <inertia ixx="${Ixx_torq_servo}" ixy="0" ixz="0" iyy="${Iyy_torq_servo}" iyz="0" izz="${Izz_torq_servo}" />
+      <origin rpy="0 0 0" xyz="${torq_servo_x} ${torq_servo_y} ${torq_servo_z}"/>
+    </inertial>
+  </link>
+
+  <link name="${fw_servo_name}">
+    <visual>
+      <geometry>
+        <cylinder length="${fw_servo_L}" radius="${fw_servo_R}"/>
+      </geometry>
+      <origin rpy="${fw_servo_rx} ${fw_servo_ry} ${fw_servo_rz}" xyz="${fw_servo_x} ${fw_servo_y} 0" /> 
+      <material name="actuator_color" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${fw_servo_L}" radius="${fw_servo_R}"/>
+      </geometry>
+      <origin rpy="${fw_servo_rx} ${fw_servo_ry} ${fw_servo_rz}" xyz="${fw_servo_x} ${fw_servo_y} 0" /> 
+    </collision>
+
+    <inertial>
+      <mass value="${flywheel_servo_mass}" />
+      <inertia ixx="${Ixx_fw_servo}" ixy="0" ixz="0" iyy="${Iyy_fw_servo}" iyz="0" izz="${Izz_fw_servo}" />
+      <origin rpy="${fw_servo_rx} ${fw_servo_ry} ${fw_servo_rz}" xyz="${fw_servo_x} ${fw_servo_y} 0" />
+    </inertial>
+  </link>
+
+ 
+  <!-- flywheel -->
+  <link name="flywheel_disk1">
+    <visual>
+      <geometry>
+        <cylinder length="${disk_thick}" radius="${disk_rad}" />
+      </geometry>
+      <origin rpy="${fw_disk_rx} ${fw_disk_ry} ${fw_disk_rz}" xyz="${fw_disk_x} ${fw_disk_y} 0" />
+      <material name="flywheel_color" />
+    </visual>
+
+    <collision>
+      <geometry>
+        <cylinder length="${disk_thick + annulus_thick}" radius="${disk_rad}" />
+      </geometry>
+      <origin rpy="${fw_disk_rx} ${fw_disk_ry} ${fw_disk_rz}" xyz="${fw_disk_x} ${-disk_thick} 0" />
+    </collision>
+
+    <inertial>
+      <mass value="${disk1_mass}" />
+      <inertia ixx="${Ixx_disk}" ixy="0" ixz="0" iyy="${Iyy_disk}" iyz="0" izz="${Izz_disk}" />
+      <origin rpy="${fw_disk_rx} ${fw_disk_ry} ${fw_disk_rz}" xyz="${fw_disk_x} ${fw_disk_y} 0" />
+   </inertial>
+
+  </link>
+
+  <!-- NOTE: annular disk mesh created (i.e. "hard-coded" on https://stl.parts) -->
+  <link name="flywheel_annulus">
+    <visual>
+      <geometry>
+        <mesh filename="file://$(find cmgdevice_description)/meshes/annular_disk_178out_152in_diam.stl" scale = "0.001 0.001 0.001" />
+      </geometry>
+      <origin rpy="${annulus_rx} ${annulus_ry} ${annulus_rz}" xyz="${annulus_x} ${annulus_y} 0" />
+      <material name="flywheel_color" />
+    </visual>
+
+    <inertial>
+      <mass value="${annulus_mass}" />
+      <inertia ixx="${Ixx_ann}" ixy="0" ixz="0" iyy="${Iyy_ann}" iyz="0" izz="${Izz_ann}" />
+      <origin rpy="${annulus_rx} ${annulus_ry} ${annulus_rz}" xyz="${annulus_x} ${annulus_y} 0" />
+    </inertial>
+  </link>
+
+  <link name="flywheel_marker">
+    <visual>
+      <geometry>
+        <cylinder length="${1.1*disk_thick}" radius="${disk_rad*0.15}" />
+      </geometry>
+      <origin rpy="${fw_disk_rx} ${fw_disk_ry} ${fw_disk_rz}" xyz="${fw_disk_x} ${-disk_thick} ${disk_rad*0.6}" />
+      <material name="black">
+        <color rgba="0.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+ <!-- Base Link Frame xyz=0 0 0, orientation: '1'=>horizontal, '2'=>vertical -->
+  <xacro:frame_bar orientation="1" prefix="B">
+    <origin xyz="0 0 0" />
+  </xacro:frame_bar>
+
+  <xacro:frame_bar orientation="1" prefix="T">
+    <origin xyz="0 0 0" />
+  </xacro:frame_bar>
+
+  <xacro:frame_bar orientation="2" prefix="L">
+    <origin xyz="0 0 0" />
+  </xacro:frame_bar>
+
+  <xacro:frame_bar orientation="2" prefix="R">
+    <origin xyz="0 0 0" />
+  </xacro:frame_bar>
+
+  <joint name="fix_bar_1B_2_2L" type="fixed" >
+    <parent link="bar_1B"/>
+    <child link="bar_2L" />
+    <origin xyz="${-0.5*(bar1_length - bar_xsec)} 0 ${0.5*(bar_xsec + bar2_length)}" />
+  </joint>
+
+  <joint name="fix_bar_1B_2_2R" type="fixed" >
+    <parent link="bar_1B"/>
+    <child link="bar_2R" />
+    <origin xyz="${0.5*(bar1_length - bar_xsec)} 0 ${0.5*(bar_xsec + bar2_length)}" />
+  </joint>
+
+  <joint name="fix_bar_1B_2_1T" type="fixed" >
+    <parent link="bar_1B"/>
+    <child link="bar_1T" />
+    <origin rpy="0 0 0" xyz="0 0 ${bar2_length + bar_xsec}" />
+  </joint>
+
+  <joint name="fix_torque_servo_joint" type="fixed" >
+    <parent link="bar_1B"/>
+    <child link="${torq_servo_name}" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
+  </joint>
+
+  <joint name="roll_moment_joint" type="revolute" >
+    <parent link="${torq_servo_name}" />
+    <child link="${fw_servo_name}" />
+    <axis xyz="0 0 1" />
+    <origin rpy="0 0 0" xyz="0 0 ${0.5*(bar2_length + bar_xsec)}" /> 
+    <limit effort="${torque_servo_Tstall}" velocity="1000" lower="-1.5708" upper="1.5708" />      
+  </joint>
+
+  <joint name="flywheel_joint" type="continuous">
+    <parent link="${fw_servo_name}" />
+    <child link="flywheel_disk1" />
+    <axis xyz="0 1 0" />
+    <origin rpy="0 0 0" xyz="0 0 0" /> 
+    <limit effort="1000" velocity="${flywheel_max_speed}" />
+  </joint>
+
+ <!-- mount the annulus disk to the mainflywheel -->
+  <joint name="flywheel_annulus_joint" type="fixed" >
+    <parent link="flywheel_disk1" />
+    <child link="flywheel_annulus" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
+  </joint>
+
+  <joint name="flywheel_marker_joint" type="fixed" >
+    <parent link="flywheel_disk1" />
+    <child link="flywheel_marker" />
+    <origin rpy="0 0 0" xyz="0 0 0" />
+  </joint>
+</robot>
+  

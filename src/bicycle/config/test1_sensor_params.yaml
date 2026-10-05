@@ -1,0 +1,31 @@
+imu:
+    accel_x:
+        bias: 0.0
+        stdev: 0.0
+    accel_y: 0.0
+        bias: 0.0
+        stdev: 0.0
+    accel_y: 0.0
+        bias: 0.0
+        stdev: 0.0
+    angvel_x:
+        bias: 0.0
+        stdev: 0.0
+    angvel_y:
+        bias: 0.0
+        stdev: 0.0
+    angvel_z:
+        bias: 0.0
+        stdev: 0.0
+    att_x:
+        bias: 0.0
+        stdev: 0.0
+    att_y:
+        bias: 0.0
+        stdev: 0.0
+    att_z:
+        bias: 0.0
+        stdev: 0.0
+
+    freq:  100.0
+    topic: 'bicycle_imu'
