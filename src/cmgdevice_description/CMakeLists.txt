@@ -14,7 +14,7 @@ find_package(xacro REQUIRED)
 #find_package(joint_state_publisher REQUIRED)
 #find_package(joint_state_publisher_gui REQUIRED)
 
-install(DIRECTORY urdf launch meshes config
+install(DIRECTORY urdf launch meshes config mjcf
   DESTINATION share/${PROJECT_NAME}
 )
 

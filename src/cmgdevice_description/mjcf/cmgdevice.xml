@@ -1,0 +1,61 @@
+<mujoco model="cmg_device">
+  <compiler angle="radian" meshdir="../meshes/" texturedir="../textures/"/>
+
+  <option timestep="0.001" gravity="0 0 -9.81"/>
+
+  <default>
+    <geom contype="1" conaffinity="1" friction="1 0.005 0.0001"/>
+  </default>
+
+  <asset>
+    <mesh name="flywheel_annulus_mesh" file="annular_disk_178out_152in_diam.stl" scale="0.001 0.001 0.001"/>
+    <texture name="flywheel_marker_texture" type="2d" file="pieslice512x512.jpg"/>
+    <material name="flywheel_marker_material" texture="flywheel_marker_texture" rgba="1 1 1 1"/>
+  </asset>
+
+  <worldbody>
+    <body name="cmg_base" pos="0 0 0">
+      <inertial pos="0 0 0.1064" mass="0.288791" diaginertia="0.001469 0.002751 0.001284"/>
+
+      <geom name="bar_1B_visual" type="box" size="0.1189 0.0125 0.0125" contype="0" conaffinity="0" group="1" rgba="0.5 0.7 0.5 1"/>
+      <geom name="bar_1B_collision" type="box" size="0.1189 0.0125 0.0125" group="3" rgba="0.5 0.5 0.5 0.25"/>
+      <geom name="bar_2L_visual" type="box" pos="-0.1064 0 0.1064" size="0.0125 0.0125 0.0939" contype="0" conaffinity="0" group="1" rgba="0.5 0.7 0.5 1"/>
+      <geom name="bar_2L_collision" type="box" pos="-0.1064 0 0.1064" size="0.0125 0.0125 0.0939" group="3" rgba="0.5 0.5 0.5 0.25"/>
+      <geom name="bar_2R_visual" type="box" pos="0.1064 0 0.1064" size="0.0125 0.0125 0.0939" contype="0" conaffinity="0" group="1" rgba="0.5 0.7 0.5 1"/>
+      <geom name="bar_2R_collision" type="box" pos="0.1064 0 0.1064" size="0.0125 0.0125 0.0939" group="3" rgba="0.5 0.5 0.5 0.25"/>
+      <geom name="bar_1T_visual" type="box" pos="0 0 0.2128" size="0.1189 0.0125 0.0125" contype="0" conaffinity="0" group="1" rgba="0.5 0.7 0.5 1"/>
+      <geom name="bar_1T_collision" type="box" pos="0 0 0.2128" size="0.1189 0.0125 0.0125" group="3" rgba="0.5 0.5 0.5 0.25"/>
+
+      <body name="torque_servo" pos="0 0 0.2483">
+        <inertial pos="0 0 0" mass="1.089" diaginertia="0.000743 0.000743 0.001103"/>
+        <geom name="torque_servo_visual" type="cylinder" size="0.045 0.023" contype="0" conaffinity="0" group="1" rgba="0.3 0.3 0.3 1"/>
+        <geom name="torque_servo_collision" type="cylinder" size="0.045 0.023" group="3" rgba="0.5 0.5 0.5 0.25"/>
+
+        <body name="flywheel_servo" pos="0 0 -0.1423">
+          <joint name="roll_moment_joint" type="hinge" axis="0 0 1" range="-1.5708 1.5708" limited="true" actuatorfrcrange="-22.6 22.6" damping="0.1"/>
+          <inertial pos="0 0.025 0" quat="0.707107 0.707107 0 0" mass="0.559" diaginertia="0.000203 0.000203 0.000175"/>
+          <geom name="flywheel_servo_visual" type="cylinder" pos="0 0.025 0" quat="0.707107 0.707107 0 0" size="0.025 0.025" contype="0" conaffinity="0" group="1" rgba="0.3 0.3 0.3 1"/>
+          <geom name="flywheel_servo_collision" type="cylinder" pos="0 0.025 0" quat="0.707107 0.707107 0 0" size="0.025 0.025" group="3" rgba="0.5 0.5 0.5 0.25"/>
+
+          <body name="flywheel_disk1">
+            <joint name="flywheel_joint" type="hinge" axis="0 1 0" actuatorfrcrange="-1000 1000"/>
+            <inertial pos="0 -0.00635 0" quat="0.5 0.5 0.5 0.5" mass="0.851375" diaginertia="0.001694 0.001694 0.003364"/>
+            <geom name="flywheel_disk_visual" type="cylinder" pos="0 -0.00635 0" quat="0.5 0.5 0.5 0.5" size="0.0889 0.00635" contype="0" conaffinity="0" group="1" rgba="1.0 0.1 0.1 1"/>
+            <geom name="flywheel_disk_collision" type="cylinder" pos="0 -0.0127 0" quat="0.5 0.5 0.5 0.5" size="0.0889 0.0127" group="3" rgba="0.5 0.5 0.5 0.25"/>
+            <geom name="flywheel_marker_visual" type="cylinder" pos="0 -0.0127 0.05334" quat="0.5 0.5 0.5 0.5" size="0.013335 0.006985" material="flywheel_marker_material" contype="0" conaffinity="0" group="1"/>
+
+            <body name="flywheel_annulus">
+              <inertial pos="0 -0.01905 0" quat="0.5 0.5 0.5 0.5" mass="0.225875" diaginertia="0.000777 0.000777 0.001548"/>
+              <geom name="flywheel_annulus_visual" pos="0 -0.01905 0" quat="0.5 0.5 0.5 0.5" type="mesh" mesh="flywheel_annulus_mesh" contype="0" conaffinity="0" group="1" rgba="1.0 0.1 0.1 1"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor name="roll_moment_motor" joint="roll_moment_joint" ctrllimited="true" ctrlrange="-22.6 22.6"/>
+    <velocity name="flywheel_velocity" joint="flywheel_joint" kv="270" ctrllimited="true" ctrlrange="-593.761 593.761"/>
+  </actuator>
+</mujoco>

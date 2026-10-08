@@ -1,9 +1,9 @@
-from setuptools import find_packages, setup
-
-# I added these for installing launch, src, and config files to share folder locations
 from glob import glob
 import os
 
+from setuptools import find_packages, setup
+
+# I added these for installing launch, src, and config files to share folder locations
 package_name = 'pid_python'
 
 setup(
@@ -31,6 +31,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'steering_pd_controller = pid_python.steering_pd_controller:main',
         ],
     },
 )

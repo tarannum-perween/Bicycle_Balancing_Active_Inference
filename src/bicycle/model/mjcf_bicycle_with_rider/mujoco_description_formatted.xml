@@ -19,15 +19,17 @@
     <light name="sun" pos="0 0 5" dir="0 0 -1" directional="true" diffuse="0.8 0.8 0.8"/>
     <geom name="ground" type="plane" size="20 20 0.1" rgba="0.35 0.38 0.35 1"/>
     <body name="base_link">
+      <freejoint name="base_free_joint"/>
       <body name="frame">
         <inertial pos="0.48 0 0.66" quat="0.5 0.5 0.5 0.5" mass="3.07549" diaginertia="0.355655 0.235711 0.138448"/>
         <body name="steering" pos="0.88 0 0.8">
           <inertial pos="0.02 0 -0.1" mass="1.55391" diaginertia="0.118356 0.0810623 0.0498287"/>
-          <joint name="steering_joint" range="-0.7 0.7" actuatorfrcrange="-20 20" damping="0.1" frictionloss="0.01" axis="-0.22 0 0.9755"/>
+          <joint name="steering_joint" type="hinge" range="-0.7 0.7" limited="true" actuatorfrcrange="-20 20" damping="0.5" armature="0.02" frictionloss="0.01" axis="-0.22 0 0.9755"/>
           <body name="wheel2" pos="0.11 0 -0.467">
             <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
-            <joint name="wheel2_joint" damping="0.01" axis="0 1 0"/>
-            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="collision"/>
+            <joint name="wheel2_joint" type="hinge" damping="0.02" armature="0.01" axis="0 1 0"/>
+            <geom name="front_tire_collision" type="cylinder" size="0.333 0.025" quat="0.707107 0.707107 0 0" friction="2.0 0.02 0.0001" class="collision"/>
+            <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="visual"/>
             <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.08 0.08 0.08 1" mesh="Wheel" class="visual"/>
             <site name="wheel2" pos="0 0 0" quat="1.0 0 0 0"/>
           </body>
@@ -37,8 +39,9 @@
         </body>
         <body name="wheel1" pos="0 0 0.333">
           <inertial pos="0 0 0" quat="0.707107 0 0 0.707107" mass="0.45288" diaginertia="0.0502194 0.0252041 0.0252041"/>
-          <joint name="wheel1_joint" damping="0.01" axis="0 1 0"/>
-          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="collision"/>
+          <joint name="wheel1_joint" type="hinge" damping="0.02" armature="0.01" axis="0 1 0"/>
+          <geom name="rear_tire_collision" type="cylinder" size="0.333 0.025" quat="0.707107 0.707107 0 0" friction="2.0 0.02 0.0001" class="collision"/>
+          <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" mesh="Wheel" class="visual"/>
           <geom pos="0.333941 -0.0250298 -0.333734" quat="0 0 0.707107 0.707107" type="mesh" rgba="0.08 0.08 0.08 1" mesh="Wheel" class="visual"/>
           <site name="wheel1" pos="0 0 0" quat="1.0 0 0 0"/>
         </body>
@@ -46,10 +49,45 @@
           <inertial pos="0 0 0" quat="0 0.707107 0 0.707107" mass="0.01" diaginertia="1.08333e-06 8.33333e-07 4.16667e-07"/>
           <geom size="0.015 0.01 0.005" type="box" class="collision"/>
           <geom size="0.015 0.01 0.005" type="box" rgba="0.1 0.8 0.2 1" class="visual"/>
+          <site name="imu_site" pos="0 0 0" quat="1 0 0 0"/>
+        </body>
+        <body name="cmg_base" pos="0.48 0 0.83">
+          <inertial pos="0 0 0.1064" mass="0.288791" diaginertia="0.001469 0.002751 0.001284"/>
+          <geom name="cmg_bar_1B_collision" type="box" size="0.1189 0.0125 0.0125" class="collision"/>
+          <geom name="cmg_bar_1B_visual" type="box" size="0.1189 0.0125 0.0125" rgba="0.5 0.7 0.5 1" class="visual"/>
+          <geom name="cmg_bar_2L_collision" type="box" pos="-0.1064 0 0.1064" size="0.0125 0.0125 0.0939" class="collision"/>
+          <geom name="cmg_bar_2L_visual" type="box" pos="-0.1064 0 0.1064" size="0.0125 0.0125 0.0939" rgba="0.5 0.7 0.5 1" class="visual"/>
+          <geom name="cmg_bar_2R_collision" type="box" pos="0.1064 0 0.1064" size="0.0125 0.0125 0.0939" class="collision"/>
+          <geom name="cmg_bar_2R_visual" type="box" pos="0.1064 0 0.1064" size="0.0125 0.0125 0.0939" rgba="0.5 0.7 0.5 1" class="visual"/>
+          <geom name="cmg_bar_1T_collision" type="box" pos="0 0 0.2128" size="0.1189 0.0125 0.0125" class="collision"/>
+          <geom name="cmg_bar_1T_visual" type="box" pos="0 0 0.2128" size="0.1189 0.0125 0.0125" rgba="0.5 0.7 0.5 1" class="visual"/>
+          <body name="cmg_torque_servo" pos="0 0 0.2483">
+            <inertial pos="0 0 0" mass="1.089" diaginertia="0.000743 0.000743 0.001103"/>
+            <geom name="cmg_torque_servo_collision" type="cylinder" size="0.045 0.023" class="collision"/>
+            <geom name="cmg_torque_servo_visual" type="cylinder" size="0.045 0.023" rgba="0.3 0.3 0.3 1" class="visual"/>
+            <body name="cmg_flywheel_servo" pos="0 0 -0.1423">
+              <joint name="cmg_roll_moment_joint" type="hinge" axis="0 0 1" range="-1.5708 1.5708" limited="true" actuatorfrcrange="-22.6 22.6" damping="0.1"/>
+              <inertial pos="0 0.025 0" quat="0.707107 0.707107 0 0" mass="0.559" diaginertia="0.000203 0.000203 0.000175"/>
+              <geom name="cmg_flywheel_servo_collision" type="cylinder" pos="0 0.025 0" quat="0.707107 0.707107 0 0" size="0.025 0.025" class="collision"/>
+              <geom name="cmg_flywheel_servo_visual" type="cylinder" pos="0 0.025 0" quat="0.707107 0.707107 0 0" size="0.025 0.025" rgba="0.3 0.3 0.3 1" class="visual"/>
+              <body name="cmg_flywheel_disk1">
+                <joint name="cmg_flywheel_joint" type="hinge" axis="0 1 0" actuatorfrcrange="-1000 1000"/>
+                <inertial pos="0 -0.00635 0" quat="0.5 0.5 0.5 0.5" mass="0.851375" diaginertia="0.001694 0.001694 0.003364"/>
+                <geom name="cmg_flywheel_disk_collision" type="cylinder" pos="0 -0.0127 0" quat="0.5 0.5 0.5 0.5" size="0.0889 0.0127" class="collision"/>
+                <geom name="cmg_flywheel_disk_visual" type="cylinder" pos="0 -0.00635 0" quat="0.5 0.5 0.5 0.5" size="0.0889 0.00635" rgba="1.0 0.1 0.1 1" class="visual"/>
+                <geom name="cmg_flywheel_marker_visual" type="cylinder" pos="0 -0.0127 0.05334" quat="0.5 0.5 0.5 0.5" size="0.013335 0.006985" rgba="0 0 0 1" class="visual"/>
+                <body name="cmg_flywheel_annulus">
+                  <inertial pos="0 -0.01905 0" quat="0.5 0.5 0.5 0.5" mass="0.225875" diaginertia="0.000777 0.000777 0.001548"/>
+                  <geom name="cmg_flywheel_annulus_visual" pos="0 -0.01905 0" quat="0.5 0.5 0.5 0.5" type="cylinder" size="0.0889 0.00635" rgba="1.0 0.1 0.1 0.35" class="visual"/>
+                </body>
+              </body>
+            </body>
+          </body>
         </body>
         <body name="rider_Pelvis" pos="0.29 0 1.01">
           <inertial pos="0 0 0.049743" quat="0.5 0.5 -0.5 0.5" mass="4.976" diaginertia="0.033653 0.029678 0.011854"/>
           <body name="rider_L5_f1" pos="-0.000206 0 0.098478">
+            <joint name="torso_roll_joint" type="hinge" range="-0.35 0.35" limited="true" actuatorfrcrange="-80 80" damping="8.0" armature="0.2" stiffness="15.0" axis="1 0 0"/>
             <body name="rider_L5_f2" quat="0.974794 0 0.223106 0">
               <body name="rider_L5">
                 <inertial pos="0 0 0.047552" quat="0.5 0.5 -0.5 0.5" mass="6.3444" diaginertia="0.024177 0.018868 0.014872"/>
@@ -333,4 +371,25 @@
     <site name="rider_LeftToe_f2" pos="0.542875813897941 0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
     <site name="rider_LeftToe" pos="0.542875813897941 0.081614 0.3146967750455776" quat="1.0 0 0 0"/>
   </worldbody>
+  <actuator>
+    <motor name="steering_motor" joint="steering_joint" gear="1" ctrlrange="-20 20" ctrllimited="true"/>
+    <motor name="rear_wheel_motor" joint="wheel1_joint" gear="1" ctrlrange="-8 8" ctrllimited="true"/>
+    <motor name="torso_roll_motor" joint="torso_roll_joint" gear="1" ctrlrange="-80 80" ctrllimited="true"/>
+    <motor name="cmg_roll_moment_motor" joint="cmg_roll_moment_joint" gear="1" ctrlrange="-22.6 22.6" ctrllimited="true"/>
+    <velocity name="cmg_flywheel_velocity" joint="cmg_flywheel_joint" kv="270" ctrlrange="-593.761 593.761" ctrllimited="true"/>
+  </actuator>
+  <sensor>
+    <framequat name="frame_orientation" objtype="body" objname="frame"/>
+    <gyro name="frame_gyro" site="imu_site"/>
+    <jointpos name="steering_angle" joint="steering_joint"/>
+    <jointvel name="steering_rate" joint="steering_joint"/>
+    <jointpos name="rear_wheel_angle" joint="wheel1_joint"/>
+    <jointvel name="rear_wheel_rate" joint="wheel1_joint"/>
+    <jointpos name="torso_roll_angle" joint="torso_roll_joint"/>
+    <jointvel name="torso_roll_rate" joint="torso_roll_joint"/>
+    <jointpos name="cmg_roll_angle" joint="cmg_roll_moment_joint"/>
+    <jointvel name="cmg_roll_rate" joint="cmg_roll_moment_joint"/>
+    <jointpos name="cmg_flywheel_angle" joint="cmg_flywheel_joint"/>
+    <jointvel name="cmg_flywheel_rate" joint="cmg_flywheel_joint"/>
+  </sensor>
 </mujoco>
